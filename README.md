@@ -1,9 +1,10 @@
 # Sirène
-![Image](https://raw.githubusercontent.com/Team-ARG-Museum/ID-42-Sirene/master/art/banner-ID-42.png)
+![Image](https://raw.githubusercontent.com/T-arg/ID-42-Sirene/master/art/banner-ID-42.png)
 
-Sirène :   
-**Download latest Arduboy version and source :** https://github.com/Team-ARG-Museum/ID-42-Sirene/releases/latest 
-MADE by TEAM a.r.g. : https://team-arg-museum.github.io/
+Sirène :
+
+**Download latest Arduboy version and source :**
+MADE by TEAM a.r.g. :
  
 2016 - JUSTIN CYR - JO3RI
 
