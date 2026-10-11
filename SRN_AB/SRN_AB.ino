@@ -1,11 +1,13 @@
 /*
-  SIRÈNE: http://www.team-arg.org/srn-manual.html
+  SIRÈNE: https://t-arg.github.io/ID-42-Sirene/
 
-  Arduboy version 1.2.2:  http://www.team-arg.org/srn-downloads.html
+  Arduboy version 2.0.0:  https://github.com/T-arg/ID-42-Sirene
 
-  MADE by TEAM a.r.g. : http://www.team-arg.org/more-about.html
+  MADE by TEAM a.r.g. : https://t-arg.github.io/
 
   2016 - JO3RI - JUSTIN_CYR
+
+  2026 - JO3RI
 
   License: MIT : https://opensource.org/licenses/MIT
 
@@ -28,7 +30,6 @@ typedef void (*FunctionPointer) ();
 const FunctionPointer PROGMEM  mainGameLoop[] = {
   stateMenuIntro,
   stateMenuMain,
-  stateMenuHelp,
   stateMenuPlay,
   stateMenuInfo,
   stateMenuSoundfx,

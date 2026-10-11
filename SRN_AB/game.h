@@ -122,7 +122,7 @@ void stateGamePlaying()
   checkPowerUP();
   checkBonus();
 
-  if (arduboy.everyXFrames(2)) ((FunctionPointer) pgm_read_word (&stages[stage - 1][currentWave]))();
+  if (arduboy.everyXFrames(2)) runWave(pgm_read_byte(&stages[stage - 1][currentWave]));
 
   drawBackground();
   drawBosses();

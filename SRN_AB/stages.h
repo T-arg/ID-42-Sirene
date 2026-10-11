@@ -18,7 +18,7 @@ boolean checkStartWave()
   return false;
 }
 
-boolean checkEndWave()
+void checkEndWave()
 {
   byte test = 0;
   for (byte i = 0; i < MAX_ONSCREEN_ENEMIES; i++)
@@ -39,275 +39,136 @@ void wait()
   }
 }
 
-void wave000()
+// ENEMY WAVES AS DATA /////////////////////////////////////////////////////////////////////
+// A wave is a list of groups of enemies (the groups use the enemy slots 0, 1, 2 ... one after the other):
+//   GROUP(enemy type, movement, shoots (0/1), how many, x, y, spacing x, spacing y, speed)
+//   x, y: position of the first enemy of the group. x and spacing x must be even, y is 0 to 256
+//   enemy n of the group starts at x + n * spacing x, y + n * spacing y (a bigger spacing x = comes later)
+// To make a new wave: add an array here, add it to enemyWaves[] and use its number (1 = first) in stages[].
+#define PATTERN_SWIM_RIGHT_LEFT   0   // straight to the left
+#define PATTERN_SWIM_TO_MIDDLE    1   // to the left, from x < 72 on it moves to the middle of the screen
+#define PATTERN_SWIM_SINE         2   // to the left, in a wave
+#define PATTERN_DOWN_UP           3   // only up, the jellyfish pulse (speed = up speed)
+#define PATTERN_DOWN_UP_AND_LEFT  4   // up (jellyfish pulse) and to the left (speed = left speed)
+
+#define GROUP(type, pattern, shoots, count, x, y, spacingX, spacingY, speed) \
+  (((pattern) << 4) | (type)), ((count) | ((shoots) << 4) | ((((y) >> 8) & 1) << 5)), ((x) / 2), ((y) & 255), ((spacingX) / 2), ((uint8_t)(spacingY)), (speed)
+
+const uint8_t PROGMEM enemyWave01[] = { 3,
+    GROUP(ENEMY_FISHY, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 128, 12, 192, 0, 3),
+    GROUP(ENEMY_FISHY, PATTERN_SWIM_RIGHT_LEFT, 0, 2, 256, 32, 192, 0, 3),
+    GROUP(ENEMY_FISHY, PATTERN_SWIM_RIGHT_LEFT, 0, 4, 192, 48, 192, 0, 3) };
+const uint8_t PROGMEM enemyWave02[] = { 2,
+    GROUP(ENEMY_FISHY, PATTERN_SWIM_TO_MIDDLE, 0, 4, 128, 12, 96, 0, 3),
+    GROUP(ENEMY_FISHY, PATTERN_SWIM_TO_MIDDLE, 0, 4, 176, 52, 96, 0, 3) };
+const uint8_t PROGMEM enemyWave03[] = { 1,
+    GROUP(ENEMY_FISHY, PATTERN_SWIM_SINE, 0, 9, 128, 32, 36, 0, 3) };
+const uint8_t PROGMEM enemyWave04[] = { 1,
+    GROUP(ENEMY_FISHY, PATTERN_SWIM_RIGHT_LEFT, 0, 8, 128, 12, 40, 6, 3) };
+const uint8_t PROGMEM enemyWave05[] = { 3,
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 128, 12, 24, 0, 1),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 128, 30, 24, 0, 1),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 128, 48, 24, 0, 1) };
+const uint8_t PROGMEM enemyWave06[] = { 3,
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 128, 12, 288, 0, 3),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 320, 32, 288, 0, 3),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 224, 48, 288, 0, 3) };
+const uint8_t PROGMEM enemyWave07[] = { 3,
+    GROUP(ENEMY_FISHY, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 128, 12, 192, 0, 2),
+    GROUP(ENEMY_FISHY, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 128, 48, 192, 0, 2),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 192, 26, 256, 0, 3) };
+const uint8_t PROGMEM enemyWave08[] = { 3,
+    GROUP(ENEMY_FISH, PATTERN_SWIM_TO_MIDDLE, 0, 3, 128, 12, 256, 0, 2),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_TO_MIDDLE, 0, 3, 256, 48, 256, 0, 2),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_TO_MIDDLE, 0, 3, 192, 31, 256, 0, 2) };
+const uint8_t PROGMEM enemyWave09[] = { 3,
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 2, 128, 12, 144, 0, 2),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 4, 128, 30, 72, 0, 2),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 2, 200, 48, 144, 0, 2) };
+const uint8_t PROGMEM enemyWave10[] = { 3,
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 128, 16, 144, 0, 1),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 128, 44, 144, 0, 1),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_SINE, 0, 3, 200, 30, 144, 0, 1) };
+const uint8_t PROGMEM enemyWave11[] = { 4,
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 2, 128, 31, 256, 0, 2),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_TO_MIDDLE, 0, 2, 192, 10, 256, 0, 2),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_TO_MIDDLE, 0, 2, 320, 48, 256, 0, 2),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_SINE, 0, 2, 256, 31, 256, 0, 2) };
+const uint8_t PROGMEM enemyWave12[] = { 3,
+    GROUP(ENEMY_FISH, PATTERN_SWIM_SINE, 0, 3, 128, 30, 96, 0, 1),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 256, 12, 256, 0, 2),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 256, 48, 256, 0, 2) };
+const uint8_t PROGMEM enemyWave13[] = { 3,
+    GROUP(ENEMY_JELLYFISH, PATTERN_DOWN_UP, 0, 3, 16, 64, 40, 16, 1),
+    GROUP(ENEMY_JELLYFISH, PATTERN_DOWN_UP, 0, 2, 32, 172, 48, 0, 1),
+    GROUP(ENEMY_JELLYFISH, PATTERN_DOWN_UP, 0, 3, 16, 256, 40, -16, 1) };
+const uint8_t PROGMEM enemyWave14[] = { 1,
+    GROUP(ENEMY_JELLYFISH, PATTERN_DOWN_UP_AND_LEFT, 0, 9, 128, 64, 40, 16, 2) };
+const uint8_t PROGMEM enemyWave15[] = { 2,
+    GROUP(ENEMY_JELLYFISH, PATTERN_DOWN_UP_AND_LEFT, 0, 6, 128, 64, 80, 32, 2),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_SINE, 0, 3, 288, 12, 96, 0, 2) };
+const uint8_t PROGMEM enemyWave16[] = { 2,
+    GROUP(ENEMY_OCTOPUS, PATTERN_SWIM_SINE, 0, 4, 128, 12, 128, 0, 1),
+    GROUP(ENEMY_OCTOPUS, PATTERN_SWIM_SINE, 0, 4, 176, 36, 128, 0, 1) };
+const uint8_t PROGMEM enemyWave17[] = { 2,
+    GROUP(ENEMY_OCTOPUS, PATTERN_SWIM_RIGHT_LEFT, 1, 4, 128, 10, 192, 0, 2),
+    GROUP(ENEMY_OCTOPUS, PATTERN_SWIM_RIGHT_LEFT, 1, 4, 192, 48, 192, 0, 2) };
+const uint8_t PROGMEM enemyWave18[] = { 3,
+    GROUP(ENEMY_OCTOPUS, PATTERN_SWIM_RIGHT_LEFT, 1, 3, 128, 10, 192, 0, 2),
+    GROUP(ENEMY_OCTOPUS, PATTERN_SWIM_RIGHT_LEFT, 1, 3, 128, 48, 192, 0, 2),
+    GROUP(ENEMY_FISH, PATTERN_SWIM_RIGHT_LEFT, 0, 3, 288, 29, 192, 0, 3) };
+
+const uint8_t* const PROGMEM enemyWaves[] = { enemyWave01, enemyWave02, enemyWave03, enemyWave04, enemyWave05, enemyWave06, enemyWave07, enemyWave08, enemyWave09, enemyWave10, enemyWave11, enemyWave12, enemyWave13, enemyWave14, enemyWave15, enemyWave16, enemyWave17, enemyWave18 };
+
+byte nextWaveByte(const uint8_t *&wave)
 {
-  wait();
+  byte value = pgm_read_byte(wave);
+  wave++;
+  return value;
 }
 
-void wave001()
+void runEnemyWave(byte waveNumber)
 {
-  if (checkStartWave())
+  const uint8_t *wave = (const uint8_t *)pgm_read_word(&enemyWaves[waveNumber - 1]);
+  boolean startWave = checkStartWave();
+  byte groups = nextWaveByte(wave);
+  byte first = 0;
+  while (groups > 0)
   {
-    enemySetInLine(ENEMY_FISHY, 0, 3, 128, 12, 192, 0);
-    enemySetInLine(ENEMY_FISHY, 3, 6, 256, 32, 192, 0);
-    enemySetInLine(ENEMY_FISHY, 5, 9, 192, 48, 192, 0);
+    groups--;
+    byte typeAndPattern = nextWaveByte(wave);
+    byte countAndFlags = nextWaveByte(wave);
+    int x = nextWaveByte(wave) * 2;
+    int y = nextWaveByte(wave) + ((countAndFlags & 0x20) << 3);
+    int spacingX = nextWaveByte(wave) * 2;
+    int spacingY = (int8_t)nextWaveByte(wave);
+    byte speed = nextWaveByte(wave);
+    byte last = first + (countAndFlags & 15);
+    if (startWave) enemySetInLine(typeAndPattern & 15, first, last, x, y, spacingX, spacingY);
+    switch (typeAndPattern >> 4)
+    {
+      case PATTERN_SWIM_RIGHT_LEFT:
+        enemySwimRightLeft(first, last, speed);
+        break;
+      case PATTERN_SWIM_TO_MIDDLE:
+        enemySwimToMiddle(first, last, speed);
+        break;
+      case PATTERN_SWIM_SINE:
+        enemySwimSine(first, last, speed);
+        break;
+      case PATTERN_DOWN_UP:
+        enemySwimDownUp(first, last, speed);
+        break;
+      case PATTERN_DOWN_UP_AND_LEFT:
+        enemySwimDownUp(first, last, 1);
+        enemySwimRightLeft(first, last, speed);
+        break;
+    }
+    if (countAndFlags & 0x10) enemyShoot(first, last);
+    first = last;
   }
-  enemySwimRightLeft(0, 9, 3);
   checkEndWave();
 }
-
-void wave002()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_FISHY, 0, 4, 128, 12, 96, 0);
-    enemySetInLine(ENEMY_FISHY, 4, 8, 176, 52, 96, 0);
-  }
-  enemySwimToMiddle(0, 8, 3);
-  checkEndWave();
-}
-
-void wave003()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_FISHY, 0, 9, 128, 32, 36, 0);
-  }
-  enemySwimSine(0, 9, 3);
-  checkEndWave();
-}
-
-void wave004()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_FISHY, 0, 8, 128, 12, 40, 6);
-  }
-  enemySwimRightLeft(0, 8, 3);
-  checkEndWave();
-}
-
-void wave005()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_FISH, 0, 3, 128, 12, 24, 0);
-    enemySetInLine(ENEMY_FISH, 3, 6, 128, 30, 24, 0);
-    enemySetInLine(ENEMY_FISH, 6, 9, 128, 48, 24, 0);
-  }
-  enemySwimRightLeft(0, 9, 1);
-  checkEndWave();
-}
-
-void wave006()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_FISH, 0, 3, 128, 12, 288, 0);
-    enemySetInLine(ENEMY_FISH, 3, 6, 320, 32, 288, 0);
-    enemySetInLine(ENEMY_FISH, 6, 9, 224, 48, 288, 0);
-  }
-  enemySwimRightLeft(0, 9, 3);
-  checkEndWave();
-}
-
-void wave007()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_FISHY, 0, 3, 128, 12, 192, 0);
-    enemySetInLine(ENEMY_FISHY, 3, 6, 128, 48, 192, 0);
-    enemySetInLine(ENEMY_FISH, 6, 9, 192, 26, 256, 0);
-  }
-  enemySwimRightLeft(0, 6, 2);
-  enemySwimRightLeft(6, 9, 3);
-  checkEndWave();
-}
-
-void wave008()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_FISH, 0, 3, 128, 12, 256, 0);
-    enemySetInLine(ENEMY_FISH, 3, 6, 256, 48, 256, 0);
-    enemySetInLine(ENEMY_FISH, 6, 9, 192, 31, 256, 0);
-  }
-  enemySwimToMiddle(0, 9, 2);
-  checkEndWave();
-}
-
-void wave009()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_FISH, 0, 2, 128, 12, 144, 0);
-    enemySetInLine(ENEMY_FISH, 2, 6, 128, 30, 72, 0);
-    enemySetInLine(ENEMY_FISH, 6, 8, 200, 48, 144, 0);
-  }
-  enemySwimRightLeft(0, 9, 2);
-  checkEndWave();
-}
-
-void wave010()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_FISH, 0, 3, 128, 16, 144, 0);
-    enemySetInLine(ENEMY_FISH, 3, 6, 128, 44, 144, 0);
-    enemySetInLine(ENEMY_FISH, 6, 9, 200, 30, 144, 0);
-  }
-  enemySwimSine(6, 9, 1);
-  enemySwimRightLeft(0, 6, 1);
-  checkEndWave();
-}
-
-void wave011()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_FISH, 0, 2, 128, 31, 256, 0);
-    enemySetInLine(ENEMY_FISH, 2, 4, 192, 10, 256, 0);
-    enemySetInLine(ENEMY_FISH, 4, 6, 320, 48, 256, 0);
-    enemySetInLine(ENEMY_FISH, 6, 8, 256, 31, 256, 0);
-  }
-  enemySwimRightLeft(0, 2, 2);
-  enemySwimToMiddle(2, 6, 2);
-  enemySwimSine(6, 8, 2);
-
-  checkEndWave();
-}
-
-void wave012()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_FISH, 0, 3, 128, 30, 96, 0);
-    enemySetInLine(ENEMY_FISH, 3, 6, 256, 12, 256, 0);
-    enemySetInLine(ENEMY_FISH, 6, 9, 256, 48, 256, 0);
-  }
-  enemySwimSine(0, 3, 1);
-  enemySwimRightLeft(3, 9, 2);
-  checkEndWave();
-}
-
-void wave013()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_JELLYFISH, 0, 3, 16, 64, 40, 16);
-    enemySetInLine(ENEMY_JELLYFISH, 3, 5, 32, 172, 48, 0);
-    enemySetInLine(ENEMY_JELLYFISH, 5, 8, 16, 256, 40, -16);
-  }
-  enemySwimDownUp(0, 8, 1);
-  checkEndWave();
-}
-
-void wave014()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_JELLYFISH, 0, 9, 128, 64, 40, 16);
-  }
-  enemySwimDownUp(0, 9, 1);
-  enemySwimRightLeft(0, 9, 2);
-  checkEndWave();
-}
-
-void wave015()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_JELLYFISH, 0, 6, 128, 64, 80, 32);
-    enemySetInLine(ENEMY_FISH, 6, 9, 288, 12, 96, 0);
-  }
-  enemySwimDownUp(0, 6, 1);
-  enemySwimRightLeft(0, 6, 2);
-  enemySwimSine(6, 9, 2);
-  checkEndWave();
-}
-
-void wave016()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_OCTOPUS, 0, 4, 128, 12, 128, 0);
-    enemySetInLine(ENEMY_OCTOPUS, 4, 8, 176, 36, 128, 0);
-  }
-  enemySwimSine(0, 8, 1);
-  checkEndWave();
-}
-
-void wave017()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_OCTOPUS, 0, 4, 128, 10, 192, 0);
-    enemySetInLine(ENEMY_OCTOPUS, 4, 8, 192, 48, 192, 0);
-  }
-  enemySwimRightLeft(0, 8, 2);
-  enemyShoot(0, 8);
-  checkEndWave();
-}
-
-void wave018()
-{
-  if (checkStartWave())
-  {
-    enemySetInLine(ENEMY_OCTOPUS, 0, 3, 128, 10, 192, 0);
-    enemySetInLine(ENEMY_OCTOPUS, 3, 6, 128, 48, 192, 0);
-    enemySetInLine(ENEMY_FISH, 6, 9, 288, 29, 192, 0);
-  }
-  enemySwimRightLeft(0, 6, 2);
-  enemySwimRightLeft(6, 9, 3);
-  enemyShoot(0, 6);
-  checkEndWave();
-}
-
-// POWER UPS
-////////////
-void wave100()
-{
-  powerUPSet(POWER_UP_HEART);
-  currentWave++;
-}
-
-void wave101()
-{
-  powerUPSet(POWER_UP_SHIELD);
-  currentWave++;
-}
-
-void wave102()
-{
-  powerUPSet(POWER_UP_TRIDENT);
-  currentWave++;
-}
-
-void wave103()
-{
-  powerUPSet(POWER_UP_BUBBLE);
-  currentWave++;
-}
-
-void wave104()
-{
-  powerUPSet(POWER_UP_SEASHELL);
-  currentWave++;
-}
-
-void wave105()
-{
-  powerUPSet(POWER_UP_MAGIC);
-  currentWave++;
-}
-
-void wave106()
-{
-  powerUPSet(POWER_UP_STAR);
-  currentWave++;
-}
-
-
 
 // BOSS ATTACKS
 ///////////////
@@ -357,256 +218,273 @@ void wave255()
 }
 
 
+// 250 - 255: boss attacks, explosions, next stage, end of the game
 typedef void (*FunctionPointer) ();
-const FunctionPointer PROGMEM stages[TOTAL_AMOUNT_OF_STAGES][TOTAL_AMOUNT_OF_WAVES] =
+const FunctionPointer PROGMEM specialWaves[] = { wave250, wave251, wave252, wave253, wave254, wave255 };
+
+void runWave(byte waveNumber)
+{
+  if (waveNumber == 0) wait();
+  else if (waveNumber < 100) runEnemyWave(waveNumber);
+  else if (waveNumber < 200)
+  {
+    powerUPSet(waveNumber - 100);
+    currentWave++;
+  }
+  else ((FunctionPointer) pgm_read_word (&specialWaves[waveNumber - 250]))();
+}
+
+// wave numbers: 0 = wait, 1 - 18 = enemy waves (enemyWaves[]), 100 - 106 = power ups (100 + POWER_UP_...),
+// 250 - 255 = special waves (specialWaves[])
+const byte PROGMEM stages[TOTAL_AMOUNT_OF_STAGES][TOTAL_AMOUNT_OF_WAVES] =
 {
   //PART 1
   { //STAGE 1
-    wave001,
-    wave001,
-    wave002,
-    wave101, //POWER_UP_SHIELD
-    wave003,
-    wave005,
-    wave005,
-    wave106, //POWER_UP_STAR
-    wave001,
-    wave002,
-    wave001,
-    wave103, //POWER_UP_BUBBLE
-    wave002,
-    wave003,
-    wave004,
-    wave106, //POWER_UP_STAR
-    wave004,
-    wave001,
-    wave005,
-    wave100, //POWER_UP_HEART
-    wave001,
-    wave005,
-    wave007,
-    wave000,
-    wave254,
+    1,
+    1,
+    2,
+    101, //POWER_UP_SHIELD
+    3,
+    5,
+    5,
+    106, //POWER_UP_STAR
+    1,
+    2,
+    1,
+    103, //POWER_UP_BUBBLE
+    2,
+    3,
+    4,
+    106, //POWER_UP_STAR
+    4,
+    1,
+    5,
+    100, //POWER_UP_HEART
+    1,
+    5,
+    7,
+    0,
+    254,
   },
   { //STAGE 2
-    wave001,
-    wave001,
-    wave002,
-    wave104, //POWER_UP_SEASHELL
-    wave002,
-    wave003,
-    wave001,
-    wave106, //POWER_UP_STAR
-    wave002,
-    wave002,
-    wave003,
-    wave101, //POWER_UP_SHIELD
-    wave003,
-    wave004,
-    wave007,
-    wave106, //POWER_UP_STAR
-    wave007,
-    wave005,
-    wave006,
-    wave100, //POWER_UP_HEART
-    wave005,
-    wave006,
-    wave007,
-    wave000,
-    wave254,
+    1,
+    1,
+    2,
+    104, //POWER_UP_SEASHELL
+    2,
+    3,
+    1,
+    106, //POWER_UP_STAR
+    2,
+    2,
+    3,
+    101, //POWER_UP_SHIELD
+    3,
+    4,
+    7,
+    106, //POWER_UP_STAR
+    7,
+    5,
+    6,
+    100, //POWER_UP_HEART
+    5,
+    6,
+    7,
+    0,
+    254,
   },
   { //STAGE 3
-    wave010,
-    wave009,
-    wave008,
-    wave101, //POWER_UP_SHIELD
-    wave006,
-    wave005,
-    wave011,
-    wave106, //POWER_UP_STAR
-    wave011,
-    wave005,
-    wave006,
-    wave100, //POWER_UP_HEART
-    wave008,
-    wave009,
-    wave010,
-    wave106, //POWER_UP_STAR
-    wave009,
-    wave006,
-    wave005,
-    wave103, //POWER_UP_BUBBLE
-    wave005,
-    wave011,
-    wave250,
-    wave253,
-    wave254,
+    10,
+    9,
+    8,
+    101, //POWER_UP_SHIELD
+    6,
+    5,
+    11,
+    106, //POWER_UP_STAR
+    11,
+    5,
+    6,
+    100, //POWER_UP_HEART
+    8,
+    9,
+    10,
+    106, //POWER_UP_STAR
+    9,
+    6,
+    5,
+    103, //POWER_UP_BUBBLE
+    5,
+    11,
+    250,
+    253,
+    254,
   },
 
   //PART 2
   { //STAGE 4
-    wave012,
-    wave001,
-    wave012,
-    wave100, //POWER_UP_HEART
-    wave001,
-    wave013,
-    wave002,
-    wave106, //POWER_UP_STAR
-    wave013,
-    wave001,
-    wave012,
-    wave105, //POWER_UP_MAGIC
-    wave001,
-    wave013,
-    wave007,
-    wave106, //POWER_UP_STAR
-    wave011,
-    wave010,
-    wave013,
-    wave102, //POWER_UP_TRIDENT
-    wave007,
-    wave012,
-    wave001,
-    wave000,
-    wave254,
+    12,
+    1,
+    12,
+    100, //POWER_UP_HEART
+    1,
+    13,
+    2,
+    106, //POWER_UP_STAR
+    13,
+    1,
+    12,
+    105, //POWER_UP_MAGIC
+    1,
+    13,
+    7,
+    106, //POWER_UP_STAR
+    11,
+    10,
+    13,
+    102, //POWER_UP_TRIDENT
+    7,
+    12,
+    1,
+    0,
+    254,
   },
   { //STAGE 5
-    wave015,
-    wave015,
-    wave014,
-    wave104, //POWER_UP_SEASHELL
-    wave013,
-    wave006,
-    wave005,
-    wave106, //POWER_UP_STAR
-    wave006,
-    wave010,
-    wave015,
-    wave101, //POWER_UP_SHIELD
-    wave014,
-    wave013,
-    wave013,
-    wave106, //POWER_UP_STAR
-    wave009,
-    wave008,
-    wave006,
-    wave100, //POWER_UP_HEART
-    wave015,
-    wave014,
-    wave013,
-    wave000,
-    wave254,
+    15,
+    15,
+    14,
+    104, //POWER_UP_SEASHELL
+    13,
+    6,
+    5,
+    106, //POWER_UP_STAR
+    6,
+    10,
+    15,
+    101, //POWER_UP_SHIELD
+    14,
+    13,
+    13,
+    106, //POWER_UP_STAR
+    9,
+    8,
+    6,
+    100, //POWER_UP_HEART
+    15,
+    14,
+    13,
+    0,
+    254,
   },
   { //STAGE 6
-    wave001,
-    wave002,
-    wave003,
-    wave100, //POWER_UP_HEART
-    wave004,
-    wave005,
-    wave006,
-    wave106, //POWER_UP_STAR
-    wave007,
-    wave008,
-    wave009,
-    wave103, //POWER_UP_BUBBLE
-    wave010,
-    wave011,
-    wave012,
-    wave106, //POWER_UP_STAR
-    wave013,
-    wave014,
-    wave015,
-    wave102, //POWER_UP_TRIDENT
-    wave014,
-    wave013,
-    wave251,
-    wave253,
-    wave254,
+    1,
+    2,
+    3,
+    100, //POWER_UP_HEART
+    4,
+    5,
+    6,
+    106, //POWER_UP_STAR
+    7,
+    8,
+    9,
+    103, //POWER_UP_BUBBLE
+    10,
+    11,
+    12,
+    106, //POWER_UP_STAR
+    13,
+    14,
+    15,
+    102, //POWER_UP_TRIDENT
+    14,
+    13,
+    251,
+    253,
+    254,
   },
 
   //PART 3
   { //STAGE 7
-    wave012,
-    wave013,
-    wave012,
-    wave100, //POWER_UP_HEART
-    wave010,
-    wave016,
-    wave013,
-    wave106, //POWER_UP_STAR
-    wave012,
-    wave010,
-    wave011,
-    wave105, //POWER_UP_MAGIC
-    wave011,
-    wave007,
-    wave016,
-    wave106, //POWER_UP_STAR
-    wave011,
-    wave010,
-    wave013,
-    wave101, //POWER_UP_SHIELD
-    wave007,
-    wave012,
-    wave001,
-    wave000,
-    wave254,
+    12,
+    13,
+    12,
+    100, //POWER_UP_HEART
+    10,
+    16,
+    13,
+    106, //POWER_UP_STAR
+    12,
+    10,
+    11,
+    105, //POWER_UP_MAGIC
+    11,
+    7,
+    16,
+    106, //POWER_UP_STAR
+    11,
+    10,
+    13,
+    101, //POWER_UP_SHIELD
+    7,
+    12,
+    1,
+    0,
+    254,
   },
   { //STAGE 8
-    wave007,
-    wave014,
-    wave017,
-    wave104, //POWER_UP_SEASHELL
-    wave016,
-    wave003,
-    wave001,
-    wave106, //POWER_UP_STAR
-    wave013,
-    wave012,
-    wave003,
-    wave100, //POWER_UP_HEART
-    wave016,
-    wave017,
-    wave016,
-    wave106, //POWER_UP_STAR
-    wave007,
-    wave005,
-    wave010,
-    wave105, //POWER_UP_MAGIC
-    wave009,
-    wave006,
-    wave007,
-    wave000,
-    wave254,
+    7,
+    14,
+    17,
+    104, //POWER_UP_SEASHELL
+    16,
+    3,
+    1,
+    106, //POWER_UP_STAR
+    13,
+    12,
+    3,
+    100, //POWER_UP_HEART
+    16,
+    17,
+    16,
+    106, //POWER_UP_STAR
+    7,
+    5,
+    10,
+    105, //POWER_UP_MAGIC
+    9,
+    6,
+    7,
+    0,
+    254,
   },
   { //STAGE 9
-    wave016,
-    wave017,
-    wave018,
-    wave102, //POWER_UP_TRIDENT
-    wave004,
-    wave005,
-    wave006,
-    wave106, //POWER_UP_STAR
-    wave007,
-    wave008,
-    wave016,
-    wave100, //POWER_UP_HEART
-    wave017,
-    wave018,
-    wave012,
-    wave106, //POWER_UP_STAR
-    wave014,
-    wave015,
-    wave016,
-    wave100, //POWER_UP_HEART
-    wave017,
-    wave018,
-    wave252,
-    wave253,
-    wave255,
+    16,
+    17,
+    18,
+    102, //POWER_UP_TRIDENT
+    4,
+    5,
+    6,
+    106, //POWER_UP_STAR
+    7,
+    8,
+    16,
+    100, //POWER_UP_HEART
+    17,
+    18,
+    12,
+    106, //POWER_UP_STAR
+    14,
+    15,
+    16,
+    100, //POWER_UP_HEART
+    17,
+    18,
+    252,
+    253,
+    255,
   },
 };
 
