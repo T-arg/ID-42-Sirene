@@ -176,6 +176,8 @@ void checkEnemies()
   {
     if ((enemy[i].HP < 1) && !bitRead(enemy[i].characteristics, 5))
     {
+      // only a real kill (the enemy is on screen); empty slots of dead or off-screen enemies keep HP 0 and run through here again and again
+      if (bitRead(enemy[i].characteristics, 4)) sfx(sfxKill, 3);
       bitSet(enemy[i].characteristics, 5);
       enemy[i].characteristics &= 0B10110000;
     }
@@ -292,6 +294,7 @@ void enemyShoot(byte firstEnemy, byte lastEnemy)
       if ((!bitRead(enemy[i].characteristics, 5)) && (enemy[i].x < 128) && (enemy[i].bulletsShot < MAX_SHOOTS_PER_ENEMY))
       {
         enemy[i].bulletsShot++;
+        sfx(sfxEnemyShot, 1);
         enemyBullet[currentEnemyBullet].isVisible = true;
         enemyBullet[currentEnemyBullet].x = enemy[i].x + 2;
         enemyBullet[currentEnemyBullet].y = enemy[i].y;
@@ -359,6 +362,7 @@ void checkExplosions()
   if (arduboy.everyXFrames(18))
   {
     enemy[globalCounter%8].characteristics = B00110000;
+    sfx(sfxBoom, 3);
     globalCounter++;
     if (globalCounter > 15)
     {
@@ -403,6 +407,7 @@ void setBosses()
 
 void setEndBoss()
 {
+  sfx(sfxBossAppear, 1);
   backgroundIsVisible = false;
   endBoss.characteristics = B10010000;
   endBoss.attackFase = 0;
@@ -451,6 +456,7 @@ void checkEndBoss()
   {
     bitClear(endBoss.characteristics, 6);
     bitSet(endBoss.characteristics, 5);
+    if (bitRead(endBoss.characteristics, 4)) sfx(sfxBossDie, 3);   // not for the empty boss slot (HP 0) at the start of a level
     for (byte i = 0; i < MAX_ONSCREEN_ENEMIES; i++)
     {
       bitSet(enemy[i].characteristics, 5);

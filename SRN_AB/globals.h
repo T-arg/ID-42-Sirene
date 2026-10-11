@@ -3,7 +3,8 @@
 
 #include <Arduino.h>
 #include <Arduboy2.h>
-#include <ArduboyTones.h>
+#include "ATMconfig.h"
+#include <ATMlib.h>
 #include "bitmaps.h"
 
 //define menu states (on main menu)
@@ -37,7 +38,7 @@
 
 Arduboy2Base arduboy;
 Sprites sprites;
-ArduboyTones sound(arduboy.audio.enabled);
+ATMsynth ATM;
 
 byte gameState = STATE_MENU_INTRO;    // start the game with the TEAM a.r.g. logo
 byte menuSelection = STATE_MENU_PLAY; // PLAY menu item is pre-selected
@@ -51,5 +52,7 @@ byte previousWave;
 int leftX;
 byte rightX;
 byte powerUpSelectorY = 0;
+
+#include "music.h"
 
 #endif

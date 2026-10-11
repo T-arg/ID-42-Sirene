@@ -27,6 +27,7 @@ void checkInputs()
   if (arduboy.justPressed(A_BUTTON))
   {
     gameState = STATE_GAME_PAUSE;
+    sfx(sfxPause, 1);
   }
 
   if (arduboy.justPressed(B_BUTTON) && (coolDown[mermaid.weaponType] == coolDownMax[mermaid.weaponType]))
@@ -58,8 +59,11 @@ void checkInputs()
     if (mermaid.weaponType == WEAPON_TYPE_MAGIC)
     {
       mermaid.magicCharging = true;
-      if (arduboy.everyXFrames(30)) mermaid.chargeBarFrame ++;
-      if (mermaid.chargeBarFrame > 4) mermaid.chargeBarFrame = 4;
+      if (arduboy.everyXFrames(30) && mermaid.chargeBarFrame < 4)
+      {
+        mermaid.chargeBarFrame++;
+        sfx(mermaid.chargeBarFrame == 4 ? sfxChargeFull : sfxCharge, 1);
+      }
     }
   }
   if (arduboy.notPressed(B_BUTTON) && (mermaid.weaponType == WEAPON_TYPE_MAGIC) && (mermaid.magicCharging == true))

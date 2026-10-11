@@ -27,7 +27,7 @@ void drawTitleScreen()
 void stateMenuIntro()
 {
   globalCounter++;
-  sprites.drawSelfMasked(34, 4, T_arg, 0);
+  sprites.drawSelfMasked(49, 20, T_arg, 0);
   if (globalCounter > 180)
   {
     globalCounter = 0;
@@ -43,9 +43,9 @@ void stateMenuMain()
     sprites.drawSelfMasked(108, 40 +(i*8), menuText, i);
   }
   sprites.drawSelfMasked(92, 40 + 8*(menuSelection-2), trident, 0);
-  if (arduboy.justPressed(DOWN_BUTTON) && (menuSelection < 4)) menuSelection++;
-  if (arduboy.justPressed(UP_BUTTON) && (menuSelection > 2)) menuSelection--;
-  if (arduboy.justPressed(B_BUTTON)) gameState = menuSelection;
+  if (arduboy.justPressed(DOWN_BUTTON) && (menuSelection < 4)) { menuSelection++; sfx(sfxMove, 1); }
+  if (arduboy.justPressed(UP_BUTTON) && (menuSelection > 2)) { menuSelection--; sfx(sfxMove, 1); }
+  if (arduboy.justPressed(B_BUTTON)) { gameState = menuSelection; sfx(sfxSelect, 1); }
 }
 
 void stateMenuInfo()

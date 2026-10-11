@@ -139,7 +139,11 @@ void stateGamePlaying()
 void stateGamePause()
 {
   sprites.drawSelfMasked(47, 24, textPause, 0);
-  if (arduboy.justPressed(A_BUTTON)) gameState = STATE_GAME_PLAYING;
+  if (arduboy.justPressed(A_BUTTON))
+  {
+    gameState = STATE_GAME_PLAYING;
+    sfx(sfxSelect, 1);
+  }
 };
 
 void gameOverShowHighScore()

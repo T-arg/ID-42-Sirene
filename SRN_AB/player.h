@@ -257,7 +257,7 @@ void checkWeapons()
 
 void shootWeapon()
 {
-  sound.tone(880, 20);
+  sfxShoot(mermaid.weaponType, mermaid.chargeBarFrame);
   if (!bullet[mermaid.currentBullet].isVisible)
   {
     if (bullet[mermaid.currentBullet].type != WEAPON_TYPE_SEASHELL)bullet[mermaid.currentBullet].frame = 0;
