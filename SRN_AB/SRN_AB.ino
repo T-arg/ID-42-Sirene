@@ -7,7 +7,7 @@
 
   2016 - JO3RI - JUSTIN_CYR
 
-  2026 - JO3RI
+  2026 - MUSIC and SOUND EFFECTS - JO3RI
 
   License: MIT : https://opensource.org/licenses/MIT
 
