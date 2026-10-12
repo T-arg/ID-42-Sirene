@@ -20,6 +20,7 @@
 #define STATE_GAME_PAUSE             7
 #define STATE_GAME_OVER              8
 #define STATE_GAME_ENDED             9
+#define STATE_MENU_JBOX             10      // jukebox (opened from the main menu)
 
 #define GAME_TOP                     0
 #define GAME_BOTTOM                  64

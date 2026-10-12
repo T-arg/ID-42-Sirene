@@ -38,14 +38,14 @@ void stateMenuIntro()
 void stateMenuMain()
 {
   drawTitleScreen();
-  for (byte i = 0; i < 3; i++)
+  for (byte i = 0; i < 4; i++)
   {
-    sprites.drawSelfMasked(108, 40 +(i*8), menuText, i);
+    sprites.drawSelfMasked(108, 32 +(i*8), menuText, i < 3 ? i : 6);   // PLAY INFO CONF JBOX
   }
-  sprites.drawSelfMasked(92, 40 + 8*(menuSelection-2), trident, 0);
-  if (arduboy.justPressed(DOWN_BUTTON) && (menuSelection < 4)) { menuSelection++; sfx(sfxMove, 1); }
+  sprites.drawSelfMasked(92, 32 + 8*(menuSelection-2), trident, 0);
+  if (arduboy.justPressed(DOWN_BUTTON) && (menuSelection < 5)) { menuSelection++; sfx(sfxMove, 1); }
   if (arduboy.justPressed(UP_BUTTON) && (menuSelection > 2)) { menuSelection--; sfx(sfxMove, 1); }
-  if (arduboy.justPressed(B_BUTTON)) { gameState = menuSelection; sfx(sfxSelect, 1); }
+  if (arduboy.justPressed(B_BUTTON)) { gameState = menuSelection < 5 ? menuSelection : STATE_MENU_JBOX; sfx(sfxSelect, 1); }
 }
 
 void stateMenuInfo()
@@ -69,6 +69,39 @@ void stateMenuSoundfx()
   {
     arduboy.audio.saveOnOff();
     gameState = STATE_MENU_MAIN;
+  }
+}
+
+// JUKEBOX: UP/DOWN = MUSIC/SNDFX, LEFT = next number, RIGHT = previous number, B = play, A = stop (A again = back to the menu)
+byte jbRow = 0;
+byte jbNr[2];                                  // MUSIC 0..12, SNDFX 0..21
+
+void stateMenuJbox()
+{
+  sprites.drawSelfMasked(33, 6, mermaidTitle, 0);
+  for (byte i = 0; i < 2; i++)
+  {
+    sprites.drawSelfMasked(40, 32 + 12*i, jboxText, i);
+    if (jbRow != i || (arduboy.frameCount & 16))              // the selected number blinks
+    {
+      sprites.drawSelfMasked(74, 32 + 12*i, numbersBig, (jbNr[i] + 1) / 10);
+      sprites.drawSelfMasked(81, 32 + 12*i, numbersBig, (jbNr[i] + 1) % 10);
+    }
+  }
+  byte n = jbRow ? JBOX_SFX : JBOX_MUSIC;
+  if (arduboy.justPressed(UP_BUTTON)) jbRow = 0;
+  if (arduboy.justPressed(DOWN_BUTTON)) jbRow = 1;
+  if (arduboy.justPressed(LEFT_BUTTON)) jbNr[jbRow] = (jbNr[jbRow] + 1) % n;
+  if (arduboy.justPressed(RIGHT_BUTTON)) jbNr[jbRow] = (jbNr[jbRow] + n - 1) % n;
+  if (arduboy.justPressed(B_BUTTON) && arduboy.audio.enabled())
+  {
+    if (jbRow) sfx((const uint8_t *)pgm_read_word(&sfxList[jbNr[1]]), jbNr[1] > 17 ? 3 : 1);
+    else musicPlay(jbNr[0]);
+  }
+  if (arduboy.justPressed(A_BUTTON))
+  {
+    if (musicId == MUSIC_OFF) gameState = STATE_MENU_MAIN;    // nothing playing: leave, the title tune restarts
+    else musicPlay(MUSIC_OFF);
   }
 }
 

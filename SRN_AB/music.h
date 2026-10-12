@@ -2497,9 +2497,25 @@ void sfxPickup(byte powerUpType)
   sfx((const uint8_t *)pgm_read_word(&pickupSfx[powerUpType]), 1);
 }
 
+// play a tune (MUSIC_OFF = stop)
+void musicPlay(byte id)
+{
+  musicId = id;
+  if (id == MUSIC_OFF) ATM.stop();
+  else ATM.play((const uint8_t *)pgm_read_word(&songs[id]));
+}
+
+// the jukebox (menu.h) plays the 13 tunes above (0 .. 12) and these 22 effects; the last 4 effects are noise (channel 3), the others channel 1
+#define JBOX_MUSIC           13
+#define JBOX_SFX             22
+const uint8_t *const sfxList[] PROGMEM = { sfxTrident, sfxBubble, sfxShell, sfxMagicS, sfxMagicL, sfxCharge, sfxChargeFull, sfxHurt, sfxEnemyShot,
+                                           sfxBossHit, sfxBossAppear, sfxWeapon, sfxHeart, sfxShield, sfxStar, sfxMove, sfxSelect, sfxPause,
+                                           sfxHit, sfxKill, sfxBoom, sfxBossDie };
+
 // called once per frame: the title tune in the menus, a jingle between the stages, the tune of the stage while playing
 void musicUpdate()
 {
+  if (gameState == STATE_MENU_JBOX) return;                // the jukebox decides what plays
   byte want = MUSIC_OFF;
   if (arduboy.audio.enabled())
   {
@@ -2509,12 +2525,7 @@ void musicUpdate()
     else if (gameState == STATE_GAME_OVER) want = MUSIC_JINGLE_OVER;
     else if (gameState == STATE_GAME_ENDED) want = MUSIC_JINGLE_END;
   }
-  if (want != musicId)
-  {
-    musicId = want;
-    if (want == MUSIC_OFF) ATM.stop();
-    else ATM.play((const uint8_t *)pgm_read_word(&songs[want]));
-  }
+  if (want != musicId) musicPlay(want);
 }
 
 #endif
