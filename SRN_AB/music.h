@@ -20,7 +20,7 @@
 #define MV(v) ((v) * MUSIC_VOL_PCT / 100)
 #define MS(n) ((uint8_t)-((((n) * MUSIC_VOL_PCT + 50) / 100) < 1 ? 1 : (((n) * MUSIC_VOL_PCT + 50) / 100)))
 
-// bytes per song:  sireneTitle 545, stageCoral 248, stageKelp 208, stageShark 264, stagePearl 176, stageJelly 144, stageSeahorse 263, stageWreck 183, stageSkull 234, stageBattle 296, jingleStage 77, jingleOver 90, jingleEnd 110  (total 2838)
+// bytes per song:  sireneTitle 507, stageCoral 229, stageKelp 198, stageShark 258, stagePearl 172, stageJelly 136, stageSeahorse 258, stageWreck 179, stageSkull 226, stageBattle 294, jingleStage 77, jingleOver 90, jingleEnd 110  (total 2734)
 // bytes of effects: 252
 
 // =====================================================================================================================
@@ -32,10 +32,10 @@
 // D minor to F major sea ballad: 6-bar wave intro, then a 20-bar loop: verse | chorus | bridge.
 // Tempo 30, 1 beat = 16 ticks, 1 bar = 64 ticks. Intro 384 ticks, loop 1280 ticks. 100 % volume.
 // CH0 pulse lead with vibrato, CH1 harp arpeggio chords, CH2 rolling saw bass (one bar transposed), CH3 waves + drums.
-// 545 bytes
+// 507 bytes
 // ---------------------------------------------------------------------------
-Song sireneTitle[] = {          // total song in bytes = 545
-  0x0F,                         // Number of tracks
+Song sireneTitle[] = {          // total song in bytes = 507
+  0x14,                         // Number of tracks
   0x00, 0x00,                   // Address of track 0   //0  wavesIntro
   0x2A, 0x00,                   // Address of track 1   //42  drums
   0x36, 0x00,                   // Address of track 2   //54  half
@@ -46,11 +46,16 @@ Song sireneTitle[] = {          // total song in bytes = 545
   0x62, 0x00,                   // Address of track 7   //98  roll
   0x7D, 0x00,                   // Address of track 8   //125  leadIntro
   0x96, 0x00,                   // Address of track 9   //150  lead
-  0x2F, 0x01,                   // Address of track 10   //303  chordsIntro
-  0x47, 0x01,                   // Address of track 11   //327  chords
-  0x8D, 0x01,                   // Address of track 12   //397  bassIntro
-  0x9F, 0x01,                   // Address of track 13   //415  bass
-  0xF5, 0x01,                   // Address of track 14   //501  bar
+  0x26, 0x01,                   // Address of track 10   //294  chordsIntro
+  0x39, 0x01,                   // Address of track 11   //313  chords
+  0x5D, 0x01,                   // Address of track 12   //349  bassIntro
+  0x6F, 0x01,                   // Address of track 13   //367  bass
+  0x9B, 0x01,                   // Address of track 14   //411  bar
+  0xA4, 0x01,                   // Address of track 15   //420  sh0
+  0xAC, 0x01,                   // Address of track 16   //428  sh1
+  0xB5, 0x01,                   // Address of track 17   //437  sh2
+  0xBE, 0x01,                   // Address of track 18   //446  sh3
+  0xC8, 0x01,                   // Address of track 19   //456  sh4
 
   0x08,                         // Channel 0 entry track (leadIntro)
   0x0A,                         // Channel 1 entry track (chordsIntro)
@@ -173,7 +178,7 @@ Song sireneTitle[] = {          // total song in bytes = 545
   ATM_DELAY(64),
   ATM_GOTO(9),   // -> lead
 
-  //"Track 9" lead  [153 bytes]
+  //"Track 9" lead  [144 bytes]
   ATM_VOL(42),
   ATM_SL_VOL((uint8_t)-1),
   ATM_VIB(2, 3),
@@ -222,11 +227,7 @@ Song sireneTitle[] = {          // total song in bytes = 545
   ATM_NOTE_A5_,
   ATM_DELAY(32),
   ATM_NOTE_A5,
-  ATM_DELAY(16),
-  ATM_NOTE_G5,
-  ATM_DELAY(16),
-  ATM_NOTE_E5,
-  ATM_DELAY(16),
+  ATM_GOTO(19),   // -> sh4
   ATM_NOTE_G5,
   ATM_DELAY(16),
   ATM_NOTE_A4,
@@ -242,11 +243,7 @@ Song sireneTitle[] = {          // total song in bytes = 545
   ATM_NOTE_A5,
   ATM_DELAY(16),
   ATM_NOTE_F5,
-  ATM_DELAY(16),
-  ATM_NOTE_G5,
-  ATM_DELAY(16),
-  ATM_NOTE_E5,
-  ATM_DELAY(16),
+  ATM_GOTO(19),   // -> sh4
   ATM_NOTE_C6,
   ATM_DELAY(32),
   ATM_NOTE_D6,
@@ -274,11 +271,7 @@ Song sireneTitle[] = {          // total song in bytes = 545
   ATM_NOTE_G5,
   ATM_DELAY(16),
   ATM_NOTE_A5,
-  ATM_DELAY(16),
-  ATM_NOTE_G5,
-  ATM_DELAY(16),
-  ATM_NOTE_E5,
-  ATM_DELAY(16),
+  ATM_GOTO(19),   // -> sh4
   ATM_NOTE_F5,
   ATM_DELAY(24),
   ATM_NOTE_D5,
@@ -323,17 +316,13 @@ Song sireneTitle[] = {          // total song in bytes = 545
   ATM_DELAY(16),
   ATM_GOTO(9),   // -> lead
 
-  //"Track 10" chordsIntro  [24 bytes]
+  //"Track 10" chordsIntro  [19 bytes]
   ATM_VOL(30),
   ATM_SL_VOL((uint8_t)-1),
   ATM_ARP(0x34, 0x22),
   ATM_NOTE_D4,
   ATM_DELAY(64),
-  ATM_NOTE_D4,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x22),
-  ATM_NOTE_A3_,
-  ATM_DELAY(64),
+  ATM_GOTO(15),   // -> sh0
   ATM_NOTE_A3_,
   ATM_DELAY(64),
   ATM_NOTE_A3,
@@ -342,25 +331,12 @@ Song sireneTitle[] = {          // total song in bytes = 545
   ATM_DELAY(64),
   ATM_GOTO(11),   // -> chords
 
-  //"Track 11" chords  [70 bytes]
+  //"Track 11" chords  [36 bytes]
   ATM_VOL(30),
   ATM_SL_VOL((uint8_t)-1),
+  ATM_GOTO(18),   // -> sh3
   ATM_ARP(0x34, 0x22),
-  ATM_NOTE_D4,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x22),
-  ATM_NOTE_A3_,
-  ATM_DELAY(64),
-  ATM_NOTE_F3,
-  ATM_DELAY(64),
-  ATM_NOTE_C4,
-  ATM_DELAY(64),
-  ATM_ARP(0x34, 0x22),
-  ATM_NOTE_D4,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x22),
-  ATM_NOTE_A3_,
-  ATM_DELAY(64),
+  ATM_GOTO(15),   // -> sh0
   ATM_NOTE_C4,
   ATM_DELAY(64),
   ATM_NOTE_A3,
@@ -369,16 +345,7 @@ Song sireneTitle[] = {          // total song in bytes = 545
   ATM_DELAY(64),
   ATM_NOTE_C4,
   ATM_DELAY(64),
-  ATM_ARP(0x34, 0x22),
-  ATM_NOTE_D4,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x22),
-  ATM_NOTE_A3_,
-  ATM_DELAY(64),
-  ATM_NOTE_F3,
-  ATM_DELAY(64),
-  ATM_NOTE_C4,
-  ATM_DELAY(64),
+  ATM_GOTO(18),   // -> sh3
   ATM_NOTE_A3_,
   ATM_DELAY(64),
   ATM_NOTE_A3,
@@ -386,11 +353,7 @@ Song sireneTitle[] = {          // total song in bytes = 545
   ATM_ARP(0x34, 0x22),
   ATM_NOTE_G3,
   ATM_DELAY(64),
-  ATM_NOTE_D4,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x22),
-  ATM_NOTE_A3_,
-  ATM_DELAY(64),
+  ATM_GOTO(15),   // -> sh0
   ATM_NOTE_A3,
   ATM_DELAY(64),
   ATM_GOTO(11),   // -> chords
@@ -406,47 +369,26 @@ Song sireneTitle[] = {          // total song in bytes = 545
   ATM_REPEAT(1, 14),   // 2x bar
   ATM_GOTO(13),   // -> bass
 
-  //"Track 13" bass  [86 bytes]
+  //"Track 13" bass  [44 bytes]
   ATM_VOL(50),
   ATM_SL_VOL((uint8_t)-3),
-  ATM_SET_TRA(0),
-  ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA((uint8_t)-4),
-  ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA(3),
-  ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA((uint8_t)-2),
-  ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA((uint8_t)-4),
-  ATM_GOTO(14),   // -> bar
+  ATM_GOTO(16),   // -> sh1
+  ATM_GOTO(17),   // -> sh2
+  ATM_GOTO(16),   // -> sh1
   ATM_SET_TRA((uint8_t)-2),
   ATM_GOTO(14),   // -> bar
   ATM_SET_TRA((uint8_t)-5),
   ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA(3),
-  ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA((uint8_t)-2),
-  ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA((uint8_t)-4),
-  ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA(3),
-  ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA((uint8_t)-2),
-  ATM_GOTO(14),   // -> bar
+  ATM_GOTO(17),   // -> sh2
+  ATM_GOTO(16),   // -> sh1
+  ATM_GOTO(17),   // -> sh2
   ATM_SET_TRA((uint8_t)-4),
   ATM_GOTO(14),   // -> bar
   ATM_SET_TRA((uint8_t)-5),
   ATM_GOTO(14),   // -> bar
   ATM_SET_TRA((uint8_t)-7),
   ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(14),   // -> bar
-  ATM_SET_TRA((uint8_t)-4),
-  ATM_GOTO(14),   // -> bar
+  ATM_GOTO(16),   // -> sh1
   ATM_SET_TRA((uint8_t)-5),
   ATM_GOTO(14),   // -> bar
   ATM_GOTO(13),   // -> bass
@@ -462,16 +404,55 @@ Song sireneTitle[] = {          // total song in bytes = 545
   ATM_DELAY(16),
   ATM_RETURN,
 
+  //"Track 15" sh0  [8 bytes]
+  ATM_NOTE_D4,
+  ATM_DELAY(64),
+  ATM_ARP(0x43, 0x22),
+  ATM_NOTE_A3_,
+  ATM_DELAY(64),
+  ATM_RETURN,
+
+  //"Track 16" sh1  [9 bytes]
+  ATM_SET_TRA(0),
+  ATM_GOTO(14),   // -> bar
+  ATM_SET_TRA((uint8_t)-4),
+  ATM_GOTO(14),   // -> bar
+  ATM_RETURN,
+
+  //"Track 17" sh2  [9 bytes]
+  ATM_SET_TRA(3),
+  ATM_GOTO(14),   // -> bar
+  ATM_SET_TRA((uint8_t)-2),
+  ATM_GOTO(14),   // -> bar
+  ATM_RETURN,
+
+  //"Track 18" sh3  [10 bytes]
+  ATM_ARP(0x34, 0x22),
+  ATM_GOTO(15),   // -> sh0
+  ATM_NOTE_F3,
+  ATM_DELAY(64),
+  ATM_NOTE_C4,
+  ATM_DELAY(64),
+  ATM_RETURN,
+
+  //"Track 19" sh4  [6 bytes]
+  ATM_DELAY(16),
+  ATM_NOTE_G5,
+  ATM_DELAY(16),
+  ATM_NOTE_E5,
+  ATM_DELAY(16),
+  ATM_RETURN,
+
 };
 
 // ---------------------------------------------------------------------------
 // Stage 1 - Coral Shallows
 // C major, bouncy island pentatonic. One 2-bar riff, transposed per chord (C Am F G, the C pentatonic fits C and Am).
 // Tempo 34, loop 512 ticks (8 bars). 60 % volume.
-// 248 bytes
+// 229 bytes
 // ---------------------------------------------------------------------------
-Song stageCoral[] = {          // total song in bytes = 248
-  0x0B,                         // Number of tracks
+Song stageCoral[] = {          // total song in bytes = 229
+  0x0E,                         // Number of tracks
   0x00, 0x00,                   // Address of track 0   //0  drums
   0x0B, 0x00,                   // Address of track 1   //11  pair
   0x10, 0x00,                   // Address of track 2   //16  beatA
@@ -480,9 +461,12 @@ Song stageCoral[] = {          // total song in bytes = 248
   0x35, 0x00,                   // Address of track 5   //53  riffA
   0x42, 0x00,                   // Address of track 6   //66  riffB
   0x4F, 0x00,                   // Address of track 7   //79  lead
-  0x7F, 0x00,                   // Address of track 8   //127  chords
-  0xA4, 0x00,                   // Address of track 9   //164  bar
-  0xB7, 0x00,                   // Address of track 10   //183  bass
+  0x6F, 0x00,                   // Address of track 8   //111  chords
+  0x7C, 0x00,                   // Address of track 9   //124  bar
+  0x8F, 0x00,                   // Address of track 10   //143  bass
+  0x99, 0x00,                   // Address of track 11   //153  sh0
+  0xAA, 0x00,                   // Address of track 12   //170  sh1
+  0xB9, 0x00,                   // Address of track 13   //185  sh2
 
   0x07,                         // Channel 0 entry track (lead)
   0x08,                         // Channel 1 entry track (chords)
@@ -561,21 +545,13 @@ Song stageCoral[] = {          // total song in bytes = 248
   ATM_DELAY(16),
   ATM_RETURN,
 
-  //"Track 7" lead  [48 bytes]
+  //"Track 7" lead  [32 bytes]
   ATM_VOL(MV(36)),
   ATM_SL_VOL(MS(2)),
-  ATM_SET_TRA(0),
-  ATM_GOTO(5),   // -> riffA
-  ATM_GOTO(6),   // -> riffB
-  ATM_SET_TRA(5),
-  ATM_GOTO(5),   // -> riffA
+  ATM_GOTO(13),   // -> sh2
   ATM_SET_TRA(7),
   ATM_GOTO(6),   // -> riffB
-  ATM_SET_TRA(0),
-  ATM_GOTO(5),   // -> riffA
-  ATM_GOTO(6),   // -> riffB
-  ATM_SET_TRA(5),
-  ATM_GOTO(5),   // -> riffA
+  ATM_GOTO(13),   // -> sh2
   ATM_SET_TRA(0),
   ATM_NOTE_C5,
   ATM_DELAY(8),
@@ -595,30 +571,12 @@ Song stageCoral[] = {          // total song in bytes = 248
   ATM_DELAY(8),
   ATM_GOTO(7),   // -> lead
 
-  //"Track 8" chords  [37 bytes]
+  //"Track 8" chords  [13 bytes]
   ATM_VOL(MV(24)),
   ATM_SL_VOL(MS(1)),
   ATM_ARP(0x43, 0x21),
-  ATM_NOTE_C4,
-  ATM_DELAY(64),
-  ATM_ARP(0x34, 0x21),
-  ATM_NOTE_A3,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x21),
-  ATM_NOTE_F3,
-  ATM_DELAY(64),
-  ATM_NOTE_G3,
-  ATM_DELAY(64),
-  ATM_NOTE_C4,
-  ATM_DELAY(64),
-  ATM_ARP(0x34, 0x21),
-  ATM_NOTE_A3,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x21),
-  ATM_NOTE_F3,
-  ATM_DELAY(64),
-  ATM_NOTE_G3,
-  ATM_DELAY(64),
+  ATM_GOTO(12),   // -> sh1
+  ATM_GOTO(12),   // -> sh1
   ATM_GOTO(8),   // -> chords
 
   //"Track 9" bar  [19 bytes]
@@ -642,26 +600,44 @@ Song stageCoral[] = {          // total song in bytes = 248
   ATM_DELAY(4),
   ATM_RETURN,
 
-  //"Track 10" bass  [38 bytes]
+  //"Track 10" bass  [10 bytes]
   ATM_VOL(MV(56)),
   ATM_SL_VOL(MS(5)),
-  ATM_SET_TRA(0),
-  ATM_GOTO(9),   // -> bar
-  ATM_SET_TRA((uint8_t)-3),
-  ATM_GOTO(9),   // -> bar
-  ATM_SET_TRA(5),
-  ATM_GOTO(9),   // -> bar
-  ATM_SET_TRA(7),
-  ATM_GOTO(9),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(9),   // -> bar
-  ATM_SET_TRA((uint8_t)-3),
-  ATM_GOTO(9),   // -> bar
-  ATM_SET_TRA(5),
-  ATM_GOTO(9),   // -> bar
-  ATM_SET_TRA(7),
-  ATM_GOTO(9),   // -> bar
+  ATM_GOTO(11),   // -> sh0
+  ATM_GOTO(11),   // -> sh0
   ATM_GOTO(10),   // -> bass
+
+  //"Track 11" sh0  [17 bytes]
+  ATM_SET_TRA(0),
+  ATM_GOTO(9),   // -> bar
+  ATM_SET_TRA((uint8_t)-3),
+  ATM_GOTO(9),   // -> bar
+  ATM_SET_TRA(5),
+  ATM_GOTO(9),   // -> bar
+  ATM_SET_TRA(7),
+  ATM_GOTO(9),   // -> bar
+  ATM_RETURN,
+
+  //"Track 12" sh1  [15 bytes]
+  ATM_NOTE_C4,
+  ATM_DELAY(64),
+  ATM_ARP(0x34, 0x21),
+  ATM_NOTE_A3,
+  ATM_DELAY(64),
+  ATM_ARP(0x43, 0x21),
+  ATM_NOTE_F3,
+  ATM_DELAY(64),
+  ATM_NOTE_G3,
+  ATM_DELAY(64),
+  ATM_RETURN,
+
+  //"Track 13" sh2  [11 bytes]
+  ATM_SET_TRA(0),
+  ATM_GOTO(5),   // -> riffA
+  ATM_GOTO(6),   // -> riffB
+  ATM_SET_TRA(5),
+  ATM_GOTO(5),   // -> riffA
+  ATM_RETURN,
 
 };
 
@@ -669,16 +645,18 @@ Song stageCoral[] = {          // total song in bytes = 248
 // Stage 2 - Kelp Forest
 // D dorian 6/8 sway (bar = 48 ticks): flowing pluck melody, slow harp arpeggios, one bass bar transposed.
 // Tempo 32, loop 384 ticks (8 bars). 60 % volume.
-// 208 bytes
+// 198 bytes
 // ---------------------------------------------------------------------------
-Song stageKelp[] = {          // total song in bytes = 208
-  0x06,                         // Number of tracks
+Song stageKelp[] = {          // total song in bytes = 198
+  0x08,                         // Number of tracks
   0x00, 0x00,                   // Address of track 0   //0  drums
   0x07, 0x00,                   // Address of track 1   //7  bar6
   0x1C, 0x00,                   // Address of track 2   //28  lead
   0x65, 0x00,                   // Address of track 3   //101  chords
-  0x90, 0x00,                   // Address of track 4   //144  bar
-  0x99, 0x00,                   // Address of track 5   //153  bass
+  0x7E, 0x00,                   // Address of track 4   //126  bar
+  0x87, 0x00,                   // Address of track 5   //135  bass
+  0xA1, 0x00,                   // Address of track 6   //161  sh0
+  0xAA, 0x00,                   // Address of track 7   //170  sh1
 
   0x02,                         // Channel 0 entry track (lead)
   0x03,                         // Channel 1 entry track (chords)
@@ -775,25 +753,16 @@ Song stageKelp[] = {          // total song in bytes = 208
   ATM_DELAY(24),
   ATM_GOTO(2),   // -> lead
 
-  //"Track 3" chords  [43 bytes]
+  //"Track 3" chords  [25 bytes]
   ATM_VOL(MV(22)),
   ATM_SL_VOL(MS(1)),
-  ATM_ARP(0x34, 0x23),
-  ATM_NOTE_D4,
-  ATM_DELAY(48),
-  ATM_ARP(0x43, 0x23),
+  ATM_GOTO(6),   // -> sh0
   ATM_NOTE_G3,
   ATM_DELAY(48),
-  ATM_ARP(0x34, 0x23),
-  ATM_NOTE_D4,
-  ATM_DELAY(48),
-  ATM_ARP(0x43, 0x23),
+  ATM_GOTO(6),   // -> sh0
   ATM_NOTE_C4,
   ATM_DELAY(48),
-  ATM_ARP(0x34, 0x23),
-  ATM_NOTE_D4,
-  ATM_DELAY(48),
-  ATM_ARP(0x43, 0x23),
+  ATM_GOTO(6),   // -> sh0
   ATM_NOTE_G3,
   ATM_DELAY(48),
   ATM_NOTE_C4,
@@ -814,26 +783,33 @@ Song stageKelp[] = {          // total song in bytes = 208
   ATM_DELAY(8),
   ATM_RETURN,
 
-  //"Track 5" bass  [38 bytes]
+  //"Track 5" bass  [26 bytes]
   ATM_VOL(MV(56)),
   ATM_SL_VOL(MS(3)),
   ATM_SET_TRA(0),
   ATM_GOTO(4),   // -> bar
   ATM_SET_TRA(5),
-  ATM_GOTO(4),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(4),   // -> bar
+  ATM_GOTO(7),   // -> sh1
   ATM_SET_TRA((uint8_t)-2),
-  ATM_GOTO(4),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(4),   // -> bar
+  ATM_GOTO(7),   // -> sh1
   ATM_SET_TRA(5),
   ATM_GOTO(4),   // -> bar
   ATM_SET_TRA((uint8_t)-2),
+  ATM_GOTO(7),   // -> sh1
+  ATM_GOTO(5),   // -> bass
+
+  //"Track 6" sh0  [9 bytes]
+  ATM_ARP(0x34, 0x23),
+  ATM_NOTE_D4,
+  ATM_DELAY(48),
+  ATM_ARP(0x43, 0x23),
+  ATM_RETURN,
+
+  //"Track 7" sh1  [7 bytes]
   ATM_GOTO(4),   // -> bar
   ATM_SET_TRA(0),
   ATM_GOTO(4),   // -> bar
-  ATM_GOTO(5),   // -> bass
+  ATM_RETURN,
 
 };
 
@@ -841,20 +817,24 @@ Song stageKelp[] = {          // total song in bytes = 208
 // Stage 3 - Shark Waters
 // E phrygian menace before the shark: snarling riff with the flat 2nd (F), pulsing root/fifth square, 8th-note bass.
 // Em Em F Em | Em C B B. Tempo 38, loop 512 ticks (8 bars). 60 % volume.
-// 264 bytes
+// 258 bytes
 // ---------------------------------------------------------------------------
-Song stageShark[] = {          // total song in bytes = 264
-  0x0A,                         // Number of tracks
+Song stageShark[] = {          // total song in bytes = 258
+  0x0E,                         // Number of tracks
   0x00, 0x00,                   // Address of track 0   //0  drums
   0x0B, 0x00,                   // Address of track 1   //11  pair
   0x10, 0x00,                   // Address of track 2   //16  beatA
   0x1B, 0x00,                   // Address of track 3   //27  beatB
   0x26, 0x00,                   // Address of track 4   //38  fill
   0x35, 0x00,                   // Address of track 5   //53  lead
-  0x81, 0x00,                   // Address of track 6   //129  pulse
-  0x92, 0x00,                   // Address of track 7   //146  chords
-  0xB8, 0x00,                   // Address of track 8   //184  bar
-  0xC9, 0x00,                   // Address of track 9   //201  bass
+  0x71, 0x00,                   // Address of track 6   //113  pulse
+  0x7A, 0x00,                   // Address of track 7   //122  chords
+  0x98, 0x00,                   // Address of track 8   //152  bar
+  0xA9, 0x00,                   // Address of track 9   //169  bass
+  0xC7, 0x00,                   // Address of track 10   //199  sh0
+  0xD2, 0x00,                   // Address of track 11   //210  sh1
+  0xD7, 0x00,                   // Address of track 12   //215  sh2
+  0xDC, 0x00,                   // Address of track 13   //220  sh3
 
   0x05,                         // Channel 0 entry track (lead)
   0x07,                         // Channel 1 entry track (chords)
@@ -903,19 +883,10 @@ Song stageShark[] = {          // total song in bytes = 264
   ATM_DELAY(4),
   ATM_RETURN,
 
-  //"Track 5" lead  [76 bytes]
+  //"Track 5" lead  [60 bytes]
   ATM_VOL(MV(38)),
   ATM_SL_VOL(MS(2)),
-  ATM_NOTE_E5,
-  ATM_DELAY(16),
-  ATM_NOTE_G5,
-  ATM_DELAY(8),
-  ATM_NOTE_B5,
-  ATM_DELAY(8),
-  ATM_NOTE_A5,
-  ATM_DELAY(16),
-  ATM_NOTE_G5,
-  ATM_DELAY(16),
+  ATM_GOTO(10),   // -> sh0
   ATM_NOTE_B5,
   ATM_DELAY(16),
   ATM_NOTE_C6,
@@ -942,16 +913,7 @@ Song stageShark[] = {          // total song in bytes = 264
   ATM_DELAY(16),
   ATM_NOTE_E5,
   ATM_DELAY(16),
-  ATM_NOTE_E5,
-  ATM_DELAY(16),
-  ATM_NOTE_G5,
-  ATM_DELAY(8),
-  ATM_NOTE_B5,
-  ATM_DELAY(8),
-  ATM_NOTE_A5,
-  ATM_DELAY(16),
-  ATM_NOTE_G5,
-  ATM_DELAY(16),
+  ATM_GOTO(10),   // -> sh0
   ATM_NOTE_C6,
   ATM_DELAY(16),
   ATM_NOTE_B5,
@@ -978,38 +940,22 @@ Song stageShark[] = {          // total song in bytes = 264
   ATM_DELAY(16),
   ATM_GOTO(5),   // -> lead
 
-  //"Track 6" pulse  [17 bytes]
-  ATM_NOTE_E4,
-  ATM_DELAY(8),
-  ATM_NOTE_B4,
-  ATM_DELAY(8),
-  ATM_NOTE_E4,
-  ATM_DELAY(8),
-  ATM_NOTE_B4,
-  ATM_DELAY(8),
-  ATM_NOTE_E4,
-  ATM_DELAY(8),
-  ATM_NOTE_B4,
-  ATM_DELAY(8),
-  ATM_NOTE_E4,
-  ATM_DELAY(8),
-  ATM_NOTE_B4,
-  ATM_DELAY(8),
+  //"Track 6" pulse  [9 bytes]
+  ATM_GOTO(11),   // -> sh1
+  ATM_GOTO(11),   // -> sh1
+  ATM_GOTO(11),   // -> sh1
+  ATM_GOTO(11),   // -> sh1
   ATM_RETURN,
 
-  //"Track 7" chords  [38 bytes]
+  //"Track 7" chords  [30 bytes]
   ATM_VOL(MV(26)),
   ATM_SL_VOL(MS(3)),
-  ATM_SET_TRA(0),
-  ATM_GOTO(6),   // -> pulse
-  ATM_SET_TRA(0),
-  ATM_GOTO(6),   // -> pulse
+  ATM_GOTO(12),   // -> sh2
+  ATM_GOTO(12),   // -> sh2
   ATM_SET_TRA(1),
   ATM_GOTO(6),   // -> pulse
-  ATM_SET_TRA(0),
-  ATM_GOTO(6),   // -> pulse
-  ATM_SET_TRA(0),
-  ATM_GOTO(6),   // -> pulse
+  ATM_GOTO(12),   // -> sh2
+  ATM_GOTO(12),   // -> sh2
   ATM_SET_TRA((uint8_t)-4),
   ATM_GOTO(6),   // -> pulse
   ATM_SET_TRA(7),
@@ -1037,19 +983,15 @@ Song stageShark[] = {          // total song in bytes = 264
   ATM_DELAY(8),
   ATM_RETURN,
 
-  //"Track 9" bass  [38 bytes]
+  //"Track 9" bass  [30 bytes]
   ATM_VOL(MV(60)),
   ATM_SL_VOL(MS(4)),
-  ATM_SET_TRA(0),
-  ATM_GOTO(8),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(8),   // -> bar
+  ATM_GOTO(13),   // -> sh3
+  ATM_GOTO(13),   // -> sh3
   ATM_SET_TRA(1),
   ATM_GOTO(8),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(8),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(8),   // -> bar
+  ATM_GOTO(13),   // -> sh3
+  ATM_GOTO(13),   // -> sh3
   ATM_SET_TRA(8),
   ATM_GOTO(8),   // -> bar
   ATM_SET_TRA(7),
@@ -1058,22 +1000,53 @@ Song stageShark[] = {          // total song in bytes = 264
   ATM_GOTO(8),   // -> bar
   ATM_GOTO(9),   // -> bass
 
+  //"Track 10" sh0  [11 bytes]
+  ATM_NOTE_E5,
+  ATM_DELAY(16),
+  ATM_NOTE_G5,
+  ATM_DELAY(8),
+  ATM_NOTE_B5,
+  ATM_DELAY(8),
+  ATM_NOTE_A5,
+  ATM_DELAY(16),
+  ATM_NOTE_G5,
+  ATM_DELAY(16),
+  ATM_RETURN,
+
+  //"Track 11" sh1  [5 bytes]
+  ATM_NOTE_E4,
+  ATM_DELAY(8),
+  ATM_NOTE_B4,
+  ATM_DELAY(8),
+  ATM_RETURN,
+
+  //"Track 12" sh2  [5 bytes]
+  ATM_SET_TRA(0),
+  ATM_GOTO(6),   // -> pulse
+  ATM_RETURN,
+
+  //"Track 13" sh3  [5 bytes]
+  ATM_SET_TRA(0),
+  ATM_GOTO(8),   // -> bar
+  ATM_RETURN,
+
 };
 
 // ---------------------------------------------------------------------------
 // Stage 4 - Pearl Garden
 // G major music-box waltz (bar = 36 ticks, 3 beats of 12): bell melody, oom-pah-pah chords, one bass note per bar.
 // G Em C D | G Em Am D. Tempo 32, loop 288 ticks (8 bars). 60 % volume.
-// 176 bytes
+// 172 bytes
 // ---------------------------------------------------------------------------
-Song stagePearl[] = {          // total song in bytes = 176
-  0x06,                         // Number of tracks
+Song stagePearl[] = {          // total song in bytes = 172
+  0x07,                         // Number of tracks
   0x00, 0x00,                   // Address of track 0   //0  drums
   0x09, 0x00,                   // Address of track 1   //9  bar3
   0x17, 0x00,                   // Address of track 2   //23  lead
   0x4D, 0x00,                   // Address of track 3   //77  chordsIn
   0x53, 0x00,                   // Address of track 4   //83  chords
-  0x89, 0x00,                   // Address of track 5   //137  bass
+  0x75, 0x00,                   // Address of track 5   //117  bass
+  0x8B, 0x00,                   // Address of track 6   //139  sh0
 
   0x02,                         // Channel 0 entry track (lead)
   0x03,                         // Channel 1 entry track (chordsIn)
@@ -1155,19 +1128,9 @@ Song stagePearl[] = {          // total song in bytes = 176
   ATM_SL_VOL(MS(3)),
   ATM_GOTO(4),   // -> chords
 
-  //"Track 4" chords  [54 bytes]
+  //"Track 4" chords  [34 bytes]
   ATM_ARP(0x43, 0x20),
-  ATM_DELAY(12),
-  ATM_NOTE_G3,
-  ATM_DELAY(12),
-  ATM_NOTE_G3,
-  ATM_DELAY(12),
-  ATM_ARP(0x34, 0x20),
-  ATM_DELAY(12),
-  ATM_NOTE_E4,
-  ATM_DELAY(12),
-  ATM_NOTE_E4,
-  ATM_DELAY(12),
+  ATM_GOTO(6),   // -> sh0
   ATM_ARP(0x43, 0x20),
   ATM_DELAY(12),
   ATM_NOTE_C4,
@@ -1177,17 +1140,9 @@ Song stagePearl[] = {          // total song in bytes = 176
   ATM_NOTE_D4,
   ATM_DELAY(12),
   ATM_NOTE_D4,
-  ATM_DELAY(24),
-  ATM_NOTE_G3,
   ATM_DELAY(12),
-  ATM_NOTE_G3,
+  ATM_GOTO(6),   // -> sh0
   ATM_DELAY(12),
-  ATM_ARP(0x34, 0x20),
-  ATM_DELAY(12),
-  ATM_NOTE_E4,
-  ATM_DELAY(12),
-  ATM_NOTE_E4,
-  ATM_DELAY(24),
   ATM_NOTE_A3,
   ATM_DELAY(12),
   ATM_NOTE_A3,
@@ -1221,20 +1176,36 @@ Song stagePearl[] = {          // total song in bytes = 176
   ATM_DELAY(36),
   ATM_GOTO(5),   // -> bass
 
+  //"Track 6" sh0  [14 bytes]
+  ATM_DELAY(12),
+  ATM_NOTE_G3,
+  ATM_DELAY(12),
+  ATM_NOTE_G3,
+  ATM_DELAY(12),
+  ATM_ARP(0x34, 0x20),
+  ATM_DELAY(12),
+  ATM_NOTE_E4,
+  ATM_DELAY(12),
+  ATM_NOTE_E4,
+  ATM_DELAY(12),
+  ATM_RETURN,
+
 };
 
 // ---------------------------------------------------------------------------
 // Stage 5 - Jellyfish Drift
 // B minor ambient drift: sparse vibrato bells, slow tremolo pad (Bm G D A), long bass roots, a breathing sea instead of drums.
 // Tempo 32, loop 512 ticks (8 bars). 60 % volume.
-// 144 bytes
+// 136 bytes
 // ---------------------------------------------------------------------------
-Song stageJelly[] = {          // total song in bytes = 144
-  0x04,                         // Number of tracks
+Song stageJelly[] = {          // total song in bytes = 136
+  0x06,                         // Number of tracks
   0x00, 0x00,                   // Address of track 0   //0  sea
   0x11, 0x00,                   // Address of track 1   //17  lead
   0x48, 0x00,                   // Address of track 2   //72  pad
-  0x6D, 0x00,                   // Address of track 3   //109  bass
+  0x55, 0x00,                   // Address of track 3   //85  bass
+  0x5F, 0x00,                   // Address of track 4   //95  sh0
+  0x6E, 0x00,                   // Address of track 5   //110  sh1
 
   0x01,                         // Channel 0 entry track (lead)
   0x02,                         // Channel 1 entry track (pad)
@@ -1307,52 +1278,44 @@ Song stageJelly[] = {          // total song in bytes = 144
   ATM_DELAY(32),
   ATM_GOTO(1),   // -> lead
 
-  //"Track 2" pad  [37 bytes]
+  //"Track 2" pad  [13 bytes]
   ATM_VOL(MV(26)),
   ATM_SL_VOL(MS(1)),
   ATM_TREM(1, 7),
-  ATM_ARP(0x34, 0x23),
-  ATM_NOTE_B3,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x23),
-  ATM_NOTE_G3,
-  ATM_DELAY(64),
-  ATM_NOTE_D4,
-  ATM_DELAY(64),
-  ATM_NOTE_A3,
-  ATM_DELAY(64),
-  ATM_ARP(0x34, 0x23),
-  ATM_NOTE_B3,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x23),
-  ATM_NOTE_G3,
-  ATM_DELAY(64),
-  ATM_NOTE_D4,
-  ATM_DELAY(64),
-  ATM_NOTE_A3,
-  ATM_DELAY(64),
+  ATM_GOTO(4),   // -> sh0
+  ATM_GOTO(4),   // -> sh0
   ATM_GOTO(2),   // -> pad
 
-  //"Track 3" bass  [22 bytes]
+  //"Track 3" bass  [10 bytes]
   ATM_VOL(MV(50)),
   ATM_SL_VOL(MS(1)),
-  ATM_NOTE_B2,
-  ATM_DELAY(64),
-  ATM_NOTE_G2,
-  ATM_DELAY(64),
-  ATM_NOTE_D3,
-  ATM_DELAY(64),
-  ATM_NOTE_A2,
-  ATM_DELAY(64),
-  ATM_NOTE_B2,
-  ATM_DELAY(64),
-  ATM_NOTE_G2,
-  ATM_DELAY(64),
-  ATM_NOTE_D3,
-  ATM_DELAY(64),
-  ATM_NOTE_A2,
-  ATM_DELAY(64),
+  ATM_GOTO(5),   // -> sh1
+  ATM_GOTO(5),   // -> sh1
   ATM_GOTO(3),   // -> bass
+
+  //"Track 4" sh0  [15 bytes]
+  ATM_ARP(0x34, 0x23),
+  ATM_NOTE_B3,
+  ATM_DELAY(64),
+  ATM_ARP(0x43, 0x23),
+  ATM_NOTE_G3,
+  ATM_DELAY(64),
+  ATM_NOTE_D4,
+  ATM_DELAY(64),
+  ATM_NOTE_A3,
+  ATM_DELAY(64),
+  ATM_RETURN,
+
+  //"Track 5" sh1  [9 bytes]
+  ATM_NOTE_B2,
+  ATM_DELAY(64),
+  ATM_NOTE_G2,
+  ATM_DELAY(64),
+  ATM_NOTE_D3,
+  ATM_DELAY(64),
+  ATM_NOTE_A2,
+  ATM_DELAY(64),
+  ATM_RETURN,
 
 };
 
@@ -1360,19 +1323,21 @@ Song stageJelly[] = {          // total song in bytes = 144
 // Stage 6 - Seahorse Run
 // G minor gallop before the seahorse: 8-4-4 bass bounce, running arpeggio lead, arp chords. Gm Eb Bb F | Gm Eb F D.
 // Tempo 40, loop 512 ticks (8 bars). 60 % volume.
-// 263 bytes
+// 258 bytes
 // ---------------------------------------------------------------------------
-Song stageSeahorse[] = {          // total song in bytes = 263
-  0x09,                         // Number of tracks
+Song stageSeahorse[] = {          // total song in bytes = 258
+  0x0B,                         // Number of tracks
   0x00, 0x00,                   // Address of track 0   //0  drums
   0x0B, 0x00,                   // Address of track 1   //11  pair
   0x10, 0x00,                   // Address of track 2   //16  beatA
   0x1B, 0x00,                   // Address of track 3   //27  beatB
   0x26, 0x00,                   // Address of track 4   //38  fill
   0x35, 0x00,                   // Address of track 5   //53  lead
-  0x99, 0x00,                   // Address of track 6   //153  chords
-  0xBB, 0x00,                   // Address of track 7   //187  beat
-  0xC2, 0x00,                   // Address of track 8   //194  bass
+  0x91, 0x00,                   // Address of track 6   //145  chords
+  0xA3, 0x00,                   // Address of track 7   //163  beat
+  0xAA, 0x00,                   // Address of track 8   //170  bass
+  0xD8, 0x00,                   // Address of track 9   //216  sh0
+  0xE3, 0x00,                   // Address of track 10   //227  sh1
 
   0x05,                         // Channel 0 entry track (lead)
   0x06,                         // Channel 1 entry track (chords)
@@ -1421,43 +1386,31 @@ Song stageSeahorse[] = {          // total song in bytes = 263
   ATM_DELAY(4),
   ATM_RETURN,
 
-  //"Track 5" lead  [100 bytes]
+  //"Track 5" lead  [92 bytes]
   ATM_VOL(MV(38)),
   ATM_SL_VOL(MS(2)),
   ATM_NOTE_G5,
-  ATM_DELAY(8),
-  ATM_NOTE_A5_,
-  ATM_DELAY(8),
+  ATM_GOTO(10),   // -> sh1
   ATM_NOTE_D6,
   ATM_DELAY(16),
   ATM_NOTE_C6,
-  ATM_DELAY(8),
-  ATM_NOTE_A5_,
-  ATM_DELAY(8),
+  ATM_GOTO(10),   // -> sh1
   ATM_NOTE_G5,
   ATM_DELAY(16),
   ATM_NOTE_G5,
-  ATM_DELAY(8),
-  ATM_NOTE_A5_,
-  ATM_DELAY(8),
+  ATM_GOTO(10),   // -> sh1
   ATM_NOTE_D6_,
   ATM_DELAY(16),
   ATM_NOTE_D6,
-  ATM_DELAY(8),
-  ATM_NOTE_A5_,
-  ATM_DELAY(8),
+  ATM_GOTO(10),   // -> sh1
   ATM_NOTE_G5,
   ATM_DELAY(16),
   ATM_NOTE_F5,
-  ATM_DELAY(8),
-  ATM_NOTE_A5_,
-  ATM_DELAY(8),
+  ATM_GOTO(10),   // -> sh1
   ATM_NOTE_D6,
   ATM_DELAY(16),
   ATM_NOTE_C6,
-  ATM_DELAY(8),
-  ATM_NOTE_A5_,
-  ATM_DELAY(8),
+  ATM_GOTO(10),   // -> sh1
   ATM_NOTE_F5,
   ATM_DELAY(16),
   ATM_NOTE_F5,
@@ -1479,9 +1432,7 @@ Song stageSeahorse[] = {          // total song in bytes = 263
   ATM_NOTE_A5_,
   ATM_DELAY(16),
   ATM_NOTE_G5,
-  ATM_DELAY(8),
-  ATM_NOTE_A5_,
-  ATM_DELAY(8),
+  ATM_GOTO(10),   // -> sh1
   ATM_NOTE_D6,
   ATM_DELAY(16),
   ATM_NOTE_D6_,
@@ -1491,9 +1442,7 @@ Song stageSeahorse[] = {          // total song in bytes = 263
   ATM_NOTE_A5_,
   ATM_DELAY(16),
   ATM_NOTE_G5,
-  ATM_DELAY(8),
-  ATM_NOTE_A5_,
-  ATM_DELAY(8),
+  ATM_GOTO(10),   // -> sh1
   ATM_NOTE_D6_,
   ATM_DELAY(16),
   ATM_NOTE_C6,
@@ -1520,25 +1469,15 @@ Song stageSeahorse[] = {          // total song in bytes = 263
   ATM_DELAY(16),
   ATM_GOTO(5),   // -> lead
 
-  //"Track 6" chords  [34 bytes]
+  //"Track 6" chords  [18 bytes]
   ATM_VOL(MV(24)),
   ATM_SL_VOL(MS(1)),
-  ATM_ARP(0x34, 0x20),
-  ATM_NOTE_G3,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x20),
-  ATM_NOTE_D4_,
-  ATM_DELAY(64),
+  ATM_GOTO(9),   // -> sh0
   ATM_NOTE_A3_,
   ATM_DELAY(64),
   ATM_NOTE_F3,
   ATM_DELAY(64),
-  ATM_ARP(0x34, 0x20),
-  ATM_NOTE_G3,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x20),
-  ATM_NOTE_D4_,
-  ATM_DELAY(64),
+  ATM_GOTO(9),   // -> sh0
   ATM_NOTE_F3,
   ATM_DELAY(64),
   ATM_NOTE_D4,
@@ -1575,23 +1514,40 @@ Song stageSeahorse[] = {          // total song in bytes = 263
   ATM_REPEAT(3, 7),   // 4x beat
   ATM_GOTO(8),   // -> bass
 
+  //"Track 9" sh0  [11 bytes]
+  ATM_ARP(0x34, 0x20),
+  ATM_NOTE_G3,
+  ATM_DELAY(64),
+  ATM_ARP(0x43, 0x20),
+  ATM_NOTE_D4_,
+  ATM_DELAY(64),
+  ATM_RETURN,
+
+  //"Track 10" sh1  [4 bytes]
+  ATM_DELAY(8),
+  ATM_NOTE_A5_,
+  ATM_DELAY(8),
+  ATM_RETURN,
+
 };
 
 // ---------------------------------------------------------------------------
 // Stage 7 - Shipwreck Bay
 // C minor, slow and dark: tolling bell hits, mournful vibrato lead, low creaking arpeggios, one bass bar transposed.
 // Cm Ab Bb G | Cm Ab Fm G. Tempo 34, loop 512 ticks (8 bars). 60 % volume.
-// 183 bytes
+// 179 bytes
 // ---------------------------------------------------------------------------
-Song stageWreck[] = {          // total song in bytes = 183
-  0x07,                         // Number of tracks
+Song stageWreck[] = {          // total song in bytes = 179
+  0x09,                         // Number of tracks
   0x00, 0x00,                   // Address of track 0   //0  drums
   0x09, 0x00,                   // Address of track 1   //9  toll
   0x14, 0x00,                   // Address of track 2   //20  leadIn
   0x1D, 0x00,                   // Address of track 3   //29  lead
   0x4F, 0x00,                   // Address of track 4   //79  chords
-  0x77, 0x00,                   // Address of track 5   //119  bar
-  0x7E, 0x00,                   // Address of track 6   //126  bass
+  0x67, 0x00,                   // Address of track 5   //103  bar
+  0x6E, 0x00,                   // Address of track 6   //110  bass
+  0x88, 0x00,                   // Address of track 7   //136  sh0
+  0x93, 0x00,                   // Address of track 8   //147  sh1
 
   0x02,                         // Channel 0 entry track (leadIn)
   0x04,                         // Channel 1 entry track (chords)
@@ -1670,25 +1626,15 @@ Song stageWreck[] = {          // total song in bytes = 183
   ATM_DELAY(16),
   ATM_GOTO(3),   // -> lead
 
-  //"Track 4" chords  [40 bytes]
+  //"Track 4" chords  [24 bytes]
   ATM_VOL(MV(24)),
   ATM_SL_VOL(MS(1)),
-  ATM_ARP(0x34, 0x23),
-  ATM_NOTE_C4,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x23),
-  ATM_NOTE_G3_,
-  ATM_DELAY(64),
+  ATM_GOTO(7),   // -> sh0
   ATM_NOTE_A3_,
   ATM_DELAY(64),
   ATM_NOTE_G3,
   ATM_DELAY(64),
-  ATM_ARP(0x34, 0x23),
-  ATM_NOTE_C4,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x23),
-  ATM_NOTE_G3_,
-  ATM_DELAY(64),
+  ATM_GOTO(7),   // -> sh0
   ATM_ARP(0x34, 0x23),
   ATM_NOTE_F3,
   ATM_DELAY(64),
@@ -1706,26 +1652,36 @@ Song stageWreck[] = {          // total song in bytes = 183
   ATM_DELAY(16),
   ATM_RETURN,
 
-  //"Track 6" bass  [38 bytes]
+  //"Track 6" bass  [26 bytes]
   ATM_VOL(MV(56)),
   ATM_SL_VOL(MS(2)),
-  ATM_SET_TRA(0),
-  ATM_GOTO(5),   // -> bar
-  ATM_SET_TRA((uint8_t)-4),
-  ATM_GOTO(5),   // -> bar
+  ATM_GOTO(8),   // -> sh1
   ATM_SET_TRA((uint8_t)-2),
   ATM_GOTO(5),   // -> bar
   ATM_SET_TRA((uint8_t)-5),
   ATM_GOTO(5),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(5),   // -> bar
-  ATM_SET_TRA((uint8_t)-4),
-  ATM_GOTO(5),   // -> bar
+  ATM_GOTO(8),   // -> sh1
   ATM_SET_TRA((uint8_t)-7),
   ATM_GOTO(5),   // -> bar
   ATM_SET_TRA((uint8_t)-5),
   ATM_GOTO(5),   // -> bar
   ATM_GOTO(6),   // -> bass
+
+  //"Track 7" sh0  [11 bytes]
+  ATM_ARP(0x34, 0x23),
+  ATM_NOTE_C4,
+  ATM_DELAY(64),
+  ATM_ARP(0x43, 0x23),
+  ATM_NOTE_G3_,
+  ATM_DELAY(64),
+  ATM_RETURN,
+
+  //"Track 8" sh1  [9 bytes]
+  ATM_SET_TRA(0),
+  ATM_GOTO(5),   // -> bar
+  ATM_SET_TRA((uint8_t)-4),
+  ATM_GOTO(5),   // -> bar
+  ATM_RETURN,
 
 };
 
@@ -1733,16 +1689,18 @@ Song stageWreck[] = {          // total song in bytes = 183
 // Stage 8 - Skull Tide
 // D minor 6/8 sea-shanty stomp (bar = 48 ticks): dotted melody, organ stabs on beats 1 and 4, pumping octave bass.
 // Dm Dm C C | Dm Gm A Dm. Tempo 36, loop 384 ticks (8 bars). 60 % volume.
-// 234 bytes
+// 226 bytes
 // ---------------------------------------------------------------------------
-Song stageSkull[] = {          // total song in bytes = 234
-  0x06,                         // Number of tracks
+Song stageSkull[] = {          // total song in bytes = 226
+  0x08,                         // Number of tracks
   0x00, 0x00,                   // Address of track 0   //0  drums
   0x07, 0x00,                   // Address of track 1   //7  bar6
   0x21, 0x00,                   // Address of track 2   //33  lead
   0x71, 0x00,                   // Address of track 3   //113  chords
-  0xA6, 0x00,                   // Address of track 4   //166  bar
-  0xB3, 0x00,                   // Address of track 5   //179  bass
+  0x97, 0x00,                   // Address of track 4   //151  bar
+  0xA4, 0x00,                   // Address of track 5   //164  bass
+  0xBE, 0x00,                   // Address of track 6   //190  sh0
+  0xC6, 0x00,                   // Address of track 7   //198  sh1
 
   0x02,                         // Channel 0 entry track (lead)
   0x03,                         // Channel 1 entry track (chords)
@@ -1851,14 +1809,10 @@ Song stageSkull[] = {          // total song in bytes = 234
   ATM_DELAY(8),
   ATM_GOTO(2),   // -> lead
 
-  //"Track 3" chords  [53 bytes]
+  //"Track 3" chords  [38 bytes]
   ATM_VOL(MV(26)),
   ATM_SL_VOL(MS(2)),
-  ATM_ARP(0x34, 0x20),
-  ATM_NOTE_D4,
-  ATM_DELAY(24),
-  ATM_NOTE_D4,
-  ATM_DELAY(24),
+  ATM_GOTO(6),   // -> sh0
   ATM_NOTE_D4,
   ATM_DELAY(24),
   ATM_NOTE_D4,
@@ -1872,11 +1826,7 @@ Song stageSkull[] = {          // total song in bytes = 234
   ATM_DELAY(24),
   ATM_NOTE_C4,
   ATM_DELAY(24),
-  ATM_ARP(0x34, 0x20),
-  ATM_NOTE_D4,
-  ATM_DELAY(24),
-  ATM_NOTE_D4,
-  ATM_DELAY(24),
+  ATM_GOTO(6),   // -> sh0
   ATM_NOTE_G3,
   ATM_DELAY(24),
   ATM_NOTE_G3,
@@ -1886,11 +1836,7 @@ Song stageSkull[] = {          // total song in bytes = 234
   ATM_DELAY(24),
   ATM_NOTE_A3,
   ATM_DELAY(24),
-  ATM_ARP(0x34, 0x20),
-  ATM_NOTE_D4,
-  ATM_DELAY(24),
-  ATM_NOTE_D4,
-  ATM_DELAY(24),
+  ATM_GOTO(6),   // -> sh0
   ATM_GOTO(3),   // -> chords
 
   //"Track 4" bar  [13 bytes]
@@ -1908,26 +1854,34 @@ Song stageSkull[] = {          // total song in bytes = 234
   ATM_DELAY(8),
   ATM_RETURN,
 
-  //"Track 5" bass  [38 bytes]
+  //"Track 5" bass  [26 bytes]
   ATM_VOL(MV(58)),
   ATM_SL_VOL(MS(3)),
   ATM_SET_TRA(0),
-  ATM_GOTO(4),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(4),   // -> bar
+  ATM_GOTO(7),   // -> sh1
   ATM_SET_TRA((uint8_t)-2),
   ATM_GOTO(4),   // -> bar
   ATM_SET_TRA((uint8_t)-2),
-  ATM_GOTO(4),   // -> bar
-  ATM_SET_TRA(0),
-  ATM_GOTO(4),   // -> bar
+  ATM_GOTO(7),   // -> sh1
   ATM_SET_TRA(5),
   ATM_GOTO(4),   // -> bar
   ATM_SET_TRA((uint8_t)-5),
+  ATM_GOTO(7),   // -> sh1
+  ATM_GOTO(5),   // -> bass
+
+  //"Track 6" sh0  [8 bytes]
+  ATM_ARP(0x34, 0x20),
+  ATM_NOTE_D4,
+  ATM_DELAY(24),
+  ATM_NOTE_D4,
+  ATM_DELAY(24),
+  ATM_RETURN,
+
+  //"Track 7" sh1  [7 bytes]
   ATM_GOTO(4),   // -> bar
   ATM_SET_TRA(0),
   ATM_GOTO(4),   // -> bar
-  ATM_GOTO(5),   // -> bass
+  ATM_RETURN,
 
 };
 
@@ -1935,10 +1889,10 @@ Song stageSkull[] = {          // total song in bytes = 234
 // Stage 9 - Pirate Ship Battle
 // A minor final battle: 16 bars, the 8-bar cycle (Am Am F G | Am Am Dm E) is played again lifted a whole step (Bm Bm G A | Bm Bm Em)
 // and always lands on E major, so it returns to Am. One 2-bar riff transposed, running 8th bass, fast arpeggios. Tempo 40, loop 1024 ticks. 60 % volume.
-// 296 bytes
+// 294 bytes
 // ---------------------------------------------------------------------------
-Song stageBattle[] = {          // total song in bytes = 296
-  0x0E,                         // Number of tracks
+Song stageBattle[] = {          // total song in bytes = 294
+  0x10,                         // Number of tracks
   0x00, 0x00,                   // Address of track 0   //0  drums
   0x0B, 0x00,                   // Address of track 1   //11  pair
   0x10, 0x00,                   // Address of track 2   //16  beatA
@@ -1950,9 +1904,11 @@ Song stageBattle[] = {          // total song in bytes = 296
   0x60, 0x00,                   // Address of track 8   //96  cyc7
   0x77, 0x00,                   // Address of track 9   //119  lead
   0x8D, 0x00,                   // Address of track 10   //141  chords
-  0xCB, 0x00,                   // Address of track 11   //203  bar
-  0xDC, 0x00,                   // Address of track 12   //220  bcyc
-  0xF1, 0x00,                   // Address of track 13   //241  bass
+  0xC3, 0x00,                   // Address of track 11   //195  bar
+  0xCC, 0x00,                   // Address of track 12   //204  bcyc
+  0xE1, 0x00,                   // Address of track 13   //225  bass
+  0xF7, 0x00,                   // Address of track 14   //247  sh0
+  0xFC, 0x00,                   // Address of track 15   //252  sh1
 
   0x09,                         // Channel 0 entry track (lead)
   0x0A,                         // Channel 1 entry track (chords)
@@ -2077,15 +2033,14 @@ Song stageBattle[] = {          // total song in bytes = 296
   ATM_GOTO(7),   // -> riffE
   ATM_GOTO(9),   // -> lead
 
-  //"Track 10" chords  [62 bytes]
+  //"Track 10" chords  [54 bytes]
   ATM_VOL(MV(26)),
   ATM_SL_VOL(MS(1)),
   ATM_ARP(0x34, 0x20),
   ATM_NOTE_A3,
   ATM_DELAY(64),
   ATM_NOTE_A3,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x20),
+  ATM_GOTO(14),   // -> sh0
   ATM_NOTE_F3,
   ATM_DELAY(64),
   ATM_NOTE_G3,
@@ -2096,16 +2051,14 @@ Song stageBattle[] = {          // total song in bytes = 296
   ATM_NOTE_A3,
   ATM_DELAY(64),
   ATM_NOTE_D4,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x20),
+  ATM_GOTO(14),   // -> sh0
   ATM_NOTE_E4,
   ATM_DELAY(64),
   ATM_ARP(0x34, 0x20),
   ATM_NOTE_B3,
   ATM_DELAY(64),
   ATM_NOTE_B3,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x20),
+  ATM_GOTO(14),   // -> sh0
   ATM_NOTE_G3,
   ATM_DELAY(64),
   ATM_NOTE_A3,
@@ -2116,29 +2069,16 @@ Song stageBattle[] = {          // total song in bytes = 296
   ATM_NOTE_B3,
   ATM_DELAY(64),
   ATM_NOTE_E4,
-  ATM_DELAY(64),
-  ATM_ARP(0x43, 0x20),
+  ATM_GOTO(14),   // -> sh0
   ATM_NOTE_E4,
   ATM_DELAY(64),
   ATM_GOTO(10),   // -> chords
 
-  //"Track 11" bar  [17 bytes]
-  ATM_NOTE_A2,
-  ATM_DELAY(8),
-  ATM_NOTE_A3,
-  ATM_DELAY(8),
-  ATM_NOTE_A2,
-  ATM_DELAY(8),
-  ATM_NOTE_A3,
-  ATM_DELAY(8),
-  ATM_NOTE_A2,
-  ATM_DELAY(8),
-  ATM_NOTE_A3,
-  ATM_DELAY(8),
-  ATM_NOTE_A2,
-  ATM_DELAY(8),
-  ATM_NOTE_A3,
-  ATM_DELAY(8),
+  //"Track 11" bar  [9 bytes]
+  ATM_GOTO(15),   // -> sh1
+  ATM_GOTO(15),   // -> sh1
+  ATM_GOTO(15),   // -> sh1
+  ATM_GOTO(15),   // -> sh1
   ATM_RETURN,
 
   //"Track 12" bcyc  [21 bytes]
@@ -2165,6 +2105,18 @@ Song stageBattle[] = {          // total song in bytes = 296
   ATM_SET_TRA((uint8_t)-5),
   ATM_GOTO(11),   // -> bar
   ATM_GOTO(13),   // -> bass
+
+  //"Track 14" sh0  [5 bytes]
+  ATM_DELAY(64),
+  ATM_ARP(0x43, 0x20),
+  ATM_RETURN,
+
+  //"Track 15" sh1  [5 bytes]
+  ATM_NOTE_A2,
+  ATM_DELAY(8),
+  ATM_NOTE_A3,
+  ATM_DELAY(8),
+  ATM_RETURN,
 
 };
 
@@ -2519,7 +2471,7 @@ void musicUpdate()
   byte want = MUSIC_OFF;
   if (arduboy.audio.enabled())
   {
-    if (gameState >= STATE_MENU_MAIN && gameState <= STATE_MENU_SOUNDFX) want = MUSIC_TITLE;
+    if (gameState <= STATE_MENU_SOUNDFX && (gameState || globalCounter > 89)) want = MUSIC_TITLE;      // from the T-arg logo on
     else if (gameState == STATE_GAME_NEXT_STAGE) want = MUSIC_JINGLE_STAGE;
     else if (gameState == STATE_GAME_PLAYING || gameState == STATE_GAME_PAUSE) want = stage;
     else if (gameState == STATE_GAME_OVER) want = MUSIC_JINGLE_OVER;

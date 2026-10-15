@@ -41,13 +41,11 @@ const FunctionPointer PROGMEM  mainGameLoop[] = {
   stateMenuJbox,
 };
 
-
 void setup() {
   arduboy.boot();
   arduboy.audio.begin();                                    // read the saved sound on/off setting (boot() does not do it)
   arduboy.setFrameRate(60);                                 // set the frame rate of the game at 60 fps
 }
-
 
 void loop() {
   if (!(arduboy.nextFrame())) return;
@@ -57,4 +55,3 @@ void loop() {
   ((FunctionPointer) pgm_read_word (&mainGameLoop[gameState]))();
   arduboy.display();
 }
-
